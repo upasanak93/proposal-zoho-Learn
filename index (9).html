@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Abhyaz: Zoho Learn Monetisation Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  }
+
+* {
+box-sizing: border-box;
+}
+
+body {
+font-family: var(--font-sans);
+background: radial-gradient(circle at 12% 0%, #dbeafe 0%, #f8fafc 42%, #eef2ff 100%);
+color: #0f172a;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+overflow-x: hidden;
+}
+
+h1, h2, h3, .font-display {
+font-family: var(--font-display);
+}
+
+/* Uniform Toolbar Buttons (Fixes Alignment Issues) */
+.ui-btn {
+height: 36px;
+padding: 0 13px;
+border-radius: 10px;
+font-size: 12px;
+font-weight: 700;
+line-height: 1;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+white-space: nowrap;
+flex-shrink: 0;
+transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+cursor: pointer;
+user-select: none;
+}
+.ui-btn:disabled {
+opacity: 0.42;
+cursor: not-allowed;
+}
+
+/* Slide Entrances & Staggered VFX */
+.slide {
+display: none;
+animation: slideEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slide.active {
+display: block;
+}
+@keyframes slideEnter {
+from {
+opacity: 0;
+transform: translateY(16px) scale(0.99);
+}
+to {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+}
+
+.slide.active .stagger-1 { animation: cardRise 0.45s ease 0.05s both; }
+.slide.active .stagger-2 { animation: cardRise 0.45s ease 0.12s both; }
+.slide.active .stagger-3 { animation: cardRise 0.45s ease 0.19s both; }
+.slide.active .stagger-4 { animation: cardRise 0.45s ease 0.26s both; }
+
+@keyframes cardRise {
+from { opacity: 0; transform: translateY(14px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+/* Glassmorphic Executive Cards */
+.exec-card {
+background: rgba(255, 255, 255, 0.94);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(203, 213, 225, 0.9);
+box-shadow: 0 12px 32px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+border-radius: 1.15rem;
+transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+.exec-card:hover {
+transform: translateY(-2px);
+box-shadow: 0 18px 38px -12px rgba(15, 23, 42, 0.13);
+}
+
+/* Realistic Zoho Platform Window Frame */
+.zoho-window {
+background: #ffffff;
+border: 1px solid #cbd5e1;
+border-radius: 1.15rem;
+overflow: hidden;
+box-shadow: 0 22px 48px -15px rgba(15, 23, 42, 0.14);
+}
+.zoho-titlebar {
+background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+color: #f8fafc;
+padding: 0.6rem 1rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 0.75rem;
+}
+
+/* Animated SVG Flow Connectors on Slides 1 & 5 */
+.dash-flow {
+stroke-dasharray: 8 6;
+animation: dashScroll 1.2s linear infinite;
+}
+@keyframes dashScroll {
+to { stroke-dashoffset: -28; }
+}
+
+.float-slow {
+animation: floatBob 3.6s ease-in-out infinite;
+}
+.float-slow-delay {
+animation: floatBob 3.6s ease-in-out 1.4s infinite;
+}
+@keyframes floatBob {
+0%, 100% { transform: translateY(0px); }
+50% { transform: translateY(-7px); }
+}
+
+.pulse-ring-badge {
+animation: badgeGlow 1.8s ease-in-out infinite;
+}
+@keyframes badgeGlow {
+0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+}
+
+/* Live Voice Indicator */
+.live-dot {
+width: 8px;
+height: 8px;
+border-radius: 9999px;
+background: #10b981;
+display: none;
+}
+.live-dot.on {
+display: inline-block;
+animation: pulseLive 1s infinite;
+}
+@keyframes pulseLive {
+0%, 100% { transform: scale(1); opacity: 1; }
+50% { transform: scale(1.65); opacity: 0.4; }
+}
+
+/* =========================================================
+SLIDE 8: FULL-BLEED CARTOON SIDE-SCROLLING WORLD (9 STAGES)
+========================================================= */
+.cartoon-world-viewport {
+width: 100%;
+overflow-x: auto;
+overflow-y: hidden;
+border-radius: 1.25rem;
+border: 2px solid #7dd3fc;
+box-shadow: 0 24px 50px -12px rgba(14, 116, 144, 0.24), inset 0 2px 12px rgba(255, 255, 255, 0.85);
+background: linear-gradient(180deg, #38bdf8 0%, #bae6fd 45%, #e0f2fe 74%, #bbf7d0 74%, #4ade80 100%);
+position: relative;
+scroll-behavior: smooth;
+}
+.cartoon-world-viewport::-webkit-scrollbar {
+height: 9px;
+}
+.cartoon-world-viewport::-webkit-scrollbar-track {
+background: #e0f2fe;
+border-radius: 999px;
+}
+.cartoon-world-viewport::-webkit-scrollbar-thumb {
+background: #0284c7;
+border-radius: 999px;
+}
+
+.cartoon-stage {
+width: 2040px;
+height: 430px;
+position: relative;
+user-select: none;
+}
+
+.cloud-drift-1 { animation: cloudFloat 36s linear infinite; }
+.cloud-drift-2 { animation: cloudFloat 48s linear infinite reverse; }
+@keyframes cloudFloat {
+0% { transform: translateX(-30px); }
+50% { transform: translateX(48px); }
+100% { transform: translateX(-30px); }
+}
+
+/* Landmark Stations along the Scenic Road */
+.landmark-station {
+position: absolute;
+bottom: 84px;
+width: 178px;
+transform: translateX(-50%);
+display: flex;
+flex-direction: column;
+align-items: center;
+cursor: pointer;
+transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+z-index: 10;
+}
+.landmark-station:hover {
+transform: translateX(-50%) translateY(-4px);
+}
+.landmark-station.visited .landmark-sign {
+border-color: #10b981;
+background: #ecfdf5;
+color: #065f46;
+}
+.landmark-station.active-station {
+transform: translateX(-50%) scale(1.06);
+filter: drop-shadow(0 12px 20px rgba(79, 70, 229, 0.28));
+z-index: 14;
+}
+.landmark-station.active-station .landmark-sign {
+background: linear-gradient(135deg, #4f46e5, #0284c7);
+color: #ffffff;
+border-color: #ffffff;
+box-shadow: 0 6px 14px rgba(79, 70, 229, 0.35);
+}
+
+.landmark-sign {
+background: rgba(255, 255, 255, 0.96);
+border: 2px solid #cbd5e1;
+border-radius: 12px;
+padding: 5px 10px;
+text-align: center;
+box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+margin-bottom: 6px;
+transition: all 0.25s ease;
+width: 168px;
+}
+
+.landing-pad {
+width: 70px;
+height: 15px;
+border-radius: 999px;
+background: radial-gradient(ellipse at center, #fde047 0%, #f59e0b 70%, #b45309 100%);
+border: 2px solid #ffffff;
+box-shadow: 0 3px 8px rgba(180, 83, 9, 0.4);
+margin-top: 4px;
+}
+.landmark-station.active-station .landing-pad {
+animation: padGlow 1s ease-in-out infinite alternate;
+}
+@keyframes padGlow {
+from { transform: scale(1); box-shadow: 0 0 8px #f59e0b; }
+to { transform: scale(1.18); box-shadow: 0 0 20px #fbbf24; }
+}
+
+/* Zoho Flow Thunder Archway Animations */
+.bolt-bounce { transform-origin: center; }
+.zap-arch-active .bolt-bounce {
+animation: cartoonBoltJump 0.65s cubic-bezier(0.28, 0.84, 0.42, 1) infinite;
+}
+@keyframes cartoonBoltJump {
+0%, 100% { transform: translateY(0px) scale(1, 1) rotate(0deg); }
+30% { transform: translateY(-11px) scale(0.88, 1.16) rotate(-8deg); }
+55% { transform: translateY(2px) scale(1.18, 0.84) rotate(6deg); }
+80% { transform: translateY(-4px) scale(0.96, 1.05) rotate(-3deg); }
+}
+
+.pulse-ring-svg {
+opacity: 0;
+transform-origin: 88px 54px;
+}
+.zap-arch-active .pulse-ring-svg.r1 { animation: svgRingPulse 1.35s ease-out infinite; }
+.zap-arch-active .pulse-ring-svg.r2 { animation: svgRingPulse 1.35s ease-out 0.48s infinite; }
+@keyframes svgRingPulse {
+0% { transform: scale(0.45); opacity: 0.95; }
+100% { transform: scale(1.95); opacity: 0; }
+}
+
+/* Renewal Portal Swirl */
+.renewal-spin {
+transform-origin: 64px 54px;
+animation: spinSlow 6s linear infinite;
+}
+@keyframes spinSlow {
+to { transform: rotate(360deg); }
+}
+
+/* Cartoon Boy Character, Directional Facing, Ground Shadow & Physics */
+.cartoon-character {
+position: absolute;
+bottom: 76px;
+left: 120px;
+width: 132px;
+height: 176px;
+transform: translateX(-50%);
+transition: left 0.85s cubic-bezier(0.32, 1.18, 0.58, 1);
+z-index: 25;
+pointer-events: none;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-end;
+}
+
+.char-speech {
+background: #0f172a;
+color: #ffffff;
+font-size: 11px;
+font-weight: 800;
+padding: 4px 10px;
+border-radius: 999px;
+white-space: nowrap;
+box-shadow: 0 6px 14px rgba(15, 23, 42, 0.28);
+border: 1.5px solid #38bdf8;
+margin-bottom: 4px;
+position: relative;
+}
+.char-speech::after {
+content: "";
+position: absolute;
+bottom: -5px;
+left: 50%;
+transform: translateX(-50%);
+border-width: 5px 5px 0;
+border-style: solid;
+border-color: #0f172a transparent transparent;
+}
+
+/* Floating Action Prop Badge Above Boy's Head */
+.action-prop-bubble {
+width: 36px;
+height: 36px;
+border-radius: 9999px;
+background: #ffffff;
+border: 2px solid #4f46e5;
+box-shadow: 0 6px 16px rgba(79, 70, 229, 0.28);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 18px;
+margin-bottom: 3px;
+animation: propPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes propPop {
+0% { transform: scale(0.2) translateY(10px); opacity: 0; }
+100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Directional Facing Wrapper: scaleX(1) faces RIGHT, scaleX(-1) faces LEFT */
+.char-facing {
+display: flex;
+flex-direction: column;
+align-items: center;
+transform-origin: bottom center;
+transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.char-facing.face-right {
+transform: scaleX(1);
+}
+.char-facing.face-left {
+transform: scaleX(-1);
+}
+
+/* Grounded Contact Shadow Under the Boy */
+.char-shadow {
+width: 52px;
+height: 10px;
+border-radius: 9999px;
+background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.48) 0%, rgba(15, 23, 42, 0.14) 65%, transparent 100%);
+margin-top: -4px;
+transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.cartoon-character.is-walking .char-shadow {
+animation: shadowPulse 0.34s ease-in-out infinite;
+}
+@keyframes shadowPulse {
+0%, 100% { transform: scaleX(1.06); opacity: 0.5; }
+50% { transform: scaleX(0.84); opacity: 0.32; }
+}
+
+.char-rig {
+width: 84px;
+height: 98px;
+transform-origin: bottom center;
+}
+
+/* Profile Walking Gait Cycle (Natural Heel-Toe Stride + Subtle Forward Lean) */
+.cartoon-character.is-walking .char-rig {
+animation: walkBob 0.34s ease-in-out infinite;
+}
+.cartoon-character.is-walking .leg-back {
+transform-origin: 39px 64px;
+animation: strideBack 0.34s ease-in-out infinite;
+}
+.cartoon-character.is-walking .leg-front {
+transform-origin: 43px 64px;
+animation: strideFront 0.34s ease-in-out infinite;
+}
+.cartoon-character.is-walking .arm-back {
+transform-origin: 36px 45px;
+animation: armSwingBack 0.34s ease-in-out infinite;
+}
+.cartoon-character.is-walking .arm-front {
+transform-origin: 46px 45px;
+animation: armSwingFront 0.34s ease-in-out infinite;
+}
+
+@keyframes walkBob {
+0%, 100% { transform: translateY(0px) rotate(4deg); }
+50% { transform: translateY(-7px) rotate(6deg); }
+}
+@keyframes strideBack {
+0%, 100% { transform: rotate(28deg); }
+50% { transform: rotate(-28deg); }
+}
+@keyframes strideFront {
+0%, 100% { transform: rotate(-28deg); }
+50% { transform: rotate(28deg); }
+}
+@keyframes armSwingBack {
+0%, 100% { transform: rotate(-24deg); }
+50% { transform: rotate(24deg); }
+}
+@keyframes armSwingFront {
+0%, 100% { transform: rotate(24deg); }
+50% { transform: rotate(-24deg); }
+}
+
+/* Squash & Stretch Landing Animation */
+.cartoon-character.is-landing .char-rig {
+animation: squashLand 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes squashLand {
+0% { transform: translateY(-22px) scale(0.9, 1.14); }
+40% { transform: translateY(2px) scale(1.22, 0.78); }
+70% { transform: translateY(-6px) scale(0.95, 1.06); }
+100% { transform: translateY(0px) scale(1, 1); }
+}
+
+/* Distinct Directional Activity Poses Toward the Station */
+.cartoon-character.act-search .char-rig {
+transform: rotate(5deg);
+}
+.cartoon-character.act-search .arm-front {
+transform-origin: 46px 45px;
+animation: inspectScroll 0.85s ease-in-out infinite alternate;
+}
+@keyframes inspectScroll {
+from { transform: rotate(-55deg); }
+to { transform: rotate(-88deg); }
+}
+
+.cartoon-character.act-choose .char-rig {
+transform: rotate(4deg);
+}
+.cartoon-character.act-choose .arm-front,
+.cartoon-character.act-enrol .arm-front {
+transform-origin: 46px 45px;
+transform: rotate(-118deg);
+}
+
+.cartoon-character.act-pay .char-rig {
+transform: rotate(6deg);
+}
+.cartoon-character.act-pay .arm-front {
+transform-origin: 46px 45px;
+animation: tapPay 0.55s ease-in-out infinite alternate;
+}
+@keyframes tapPay {
+from { transform: rotate(-55deg); }
+to { transform: rotate(-85deg); }
+}
+
+.cartoon-character.act-study .char-rig {
+animation: studyFocus 1.15s ease-in-out infinite;
+}
+.cartoon-character.act-study .arm-front {
+transform-origin: 46px 45px;
+animation: typeStudy 0.6s ease-in-out infinite alternate;
+}
+@keyframes typeStudy {
+from { transform: rotate(-52deg); }
+to { transform: rotate(-68deg); }
+}
+@keyframes studyFocus {
+0%, 100% { transform: rotate(6deg) translateY(0); }
+50% { transform: rotate(8deg) translateY(-2px); }
+}
+
+.cartoon-character.act-celebrate .char-rig {
+animation: victoryJump 0.72s ease-in-out infinite;
+}
+.cartoon-character.act-celebrate .arm-back {
+transform-origin: 36px 45px;
+transform: rotate(-135deg);
+}
+.cartoon-character.act-celebrate .arm-front {
+transform-origin: 46px 45px;
+transform: rotate(-135deg);
+}
+@keyframes victoryJump {
+0%, 100% { transform: translateY(0) scale(1, 1); }
+45% { transform: translateY(-16px) scale(0.94, 1.08); }
+75% { transform: translateY(2px) scale(1.12, 0.88); }
+}
+
+/* Dust Puff & Floating VFX Particles */
+.dust-puff {
+position: absolute;
+bottom: 82px;
+width: 14px;
+height: 14px;
+border-radius: 9999px;
+background: rgba(255, 255, 255, 0.92);
+pointer-events: none;
+z-index: 22;
+animation: dustSpread 0.55s ease-out forwards;
+}
+@keyframes dustSpread {
+0% { transform: translate(0, 0) scale(0.5); opacity: 0.95; }
+100% { transform: translate(var(--dx), var(--dy)) scale(1.65); opacity: 0; }
+}
+
+.vfx-floater {
+position: absolute;
+font-size: 18px;
+font-weight: 800;
+pointer-events: none;
+z-index: 32;
+animation: vfxRise 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes vfxRise {
+0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+20% { opacity: 1; transform: translate(var(--vx1), -18px) scale(1.15); }
+100% { transform: translate(var(--vx2), -76px) scale(0.85); opacity: 0; }
+}
+
+.confetti-bit {
+position: absolute;
+width: 8px;
+height: 8px;
+border-radius: 2px;
+pointer-events: none;
+z-index: 30;
+animation: confettiBurst 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes confettiBurst {
+0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+100% { transform: translate(var(--cx), var(--cy)) rotate(540deg) scale(0.6); opacity: 0; }
+}
+
+/* Preview Slide Animated Funnel & Shimmer */
+@keyframes funnelNodePulse {
+  0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08); }
+  50% { transform: translateY(-4px) scale(1.03); box-shadow: 0 12px 24px rgba(79, 70, 229, 0.22); }
+}
+.slide.active .funnel-step-1 { animation: cardRise 0.45s ease 0.05s both, funnelNodePulse 3.2s ease-in-out 0.6s infinite; }
+.slide.active .funnel-step-2 { animation: cardRise 0.45s ease 0.14s both, funnelNodePulse 3.2s ease-in-out 1.2s infinite; }
+.slide.active .funnel-step-3 { animation: cardRise 0.45s ease 0.23s both, funnelNodePulse 3.2s ease-in-out 1.8s infinite; }
+.slide.active .funnel-step-4 { animation: cardRise 0.45s ease 0.32s both, funnelNodePulse 3.2s ease-in-out 2.4s infinite; }
+.slide.active .funnel-step-5 { animation: cardRise 0.45s ease 0.41s both, funnelNodePulse 3.2s ease-in-out 3.0s infinite; }
+
+.shimmer-badge {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-badge::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+  animation: shimmerSweep 2.4s infinite;
+}
+@keyframes shimmerSweep {
+  0% { left: -100%; }
+  60%, 100% { left: 160%; }
+}
+
+/* Smooth animated progress bar fills on Slide 6 & 7 */
+.slide.active .bar-fill-anim {
+  animation: barGrow 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+  transform-origin: left center;
+}
+@keyframes barGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+</style>
+
+</head>
+<body class="antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-6 py-2.5 shadow-sm">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2.5 shrink-0">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-indigo-500/20">
+        A
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="font-display font-extrabold text-slate-900 text-sm sm:text-base tracking-tight whitespace-nowrap">Abhyaz</span>
+        <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 whitespace-nowrap">
+          Zoho Learn Monetisation
+        </span>
+      </div>
+    </div>
+
+   <div class="flex flex-wrap items-center gap-2">
+      <button id="autoAdvanceBtn" onclick="toggleAutoAdvance()" class="ui-btn border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100">
+        <span>⏭</span> <span>Auto-Next: On</span>
+      </button>
+      <button id="voiceBtn" onclick="toggleVoice()" class="ui-btn border border-slate-200 bg-white text-slate-700 hover:border-sky-400 hover:bg-slate-50">
+        <span>🗣️</span> <span>Voice: Off</span>
+      </button>
+      <button id="sfxBtn" onclick="toggleSfx()" class="ui-btn border border-slate-200 bg-white text-slate-700 hover:border-sky-400 hover:bg-slate-50">
+        <span>🔊</span> <span>SFX: Off</span>
+      </button>
+
+      <div class="h-6 w-px bg-slate-200 mx-0.5 hidden md:block"></div>
+
+      <button id="prevBtn" onclick="changeSlide(-1)" class="ui-btn border border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
+        <span>←</span> <span>Prev</span>
+      </button>
+      <span id="slideCounter" class="h-9 px-2.5 inline-flex items-center justify-center text-xs font-extrabold text-slate-600 tabular-nums whitespace-nowrap bg-slate-100 rounded-lg border border-slate-200">
+        1 / 9
+      </span>
+      <button id="nextBtn" onclick="changeSlide(1)" class="ui-btn bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm hover:from-sky-500 hover:to-indigo-500">
+        <span>Next</span> <span>→</span>
+      </button>
+    </div>
+
+</div>
+</header>
+
+<div id="dotsBar" class="flex justify-center items-center gap-2 pt-3 px-4"></div>
+
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-4 flex flex-col justify-center">
+
+ <!-- SLIDE 1: OBJECTIVE & FULL PROPOSED APPROACH -->
+
+<section class="slide active" data-slide="1">
+    <div class="exec-card p-6 sm:p-8 bg-gradient-to-br from-white via-sky-50/40 to-indigo-50/70">
+      <div class="max-w-5xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold uppercase tracking-wider mb-3">
+          <span>ABHYAZ · ZOHO LEARN MONETISATION DEMO</span>
+        </div>
+
+       <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-3">
+          Objective &amp; Proposed Approach: Course Monetisation &amp; Enrolment Management
+        </h1>
+
+        <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-4">
+          <strong>Objective:</strong> Abhyaz offers structured technical and Zoho courses and needed to monetise them while exploring end-to-end <strong>enrolment management</strong> and <strong>monetisation management</strong> across individual learners and college cohorts. Below is the full proposed approach connecting commerce checkout, CRM deals, Zoho Flow automation, Zoho Learn enrolment and completion, filtered college analytics, optional renewals, and an optional per-college portal.
+        </p>
+
+        <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/90 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-4 mb-5" style="display:none" aria-hidden="true">
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+              <span class="live-dot" id="dot-1"></span>
+              <span>Narration &amp; Auto-Advance</span>
+            </div>
+            <button onclick="replayCurrentNarration()" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+              <span>🔊</span> <span>Replay</span>
+            </button>
+          </div>
+          <p id="narration-1" class="text-sm text-slate-800 leading-relaxed">
+        Abhyaz sells technical and Zoho courses. We want one simple way to sell them, enrol learners, and report to colleges. Learners can try a free two-lesson preview first. Zoho Commerce then takes the payment. Zoho CRM keeps a record of every buyer. Zoho Flow gives the learner access automatically, and Zoho Analytics shows each college its own progress. A separate college portal is an optional extra.
+      </p>
+          <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-3">
+            <div id="prog-1" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500 transition-all duration-200"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 mb-6">
+          <button onclick="startGuidedDemo()" class="ui-btn !h-11 !px-5 bg-gradient-to-r from-sky-600 via-indigo-600 to-violet-600 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 hover:brightness-105">
+            <span>▶</span> <span>Start Guided Walkthrough</span>
+          </button>
+          <button onclick="goToSlide(9)" class="ui-btn !h-11 !px-5 bg-white border border-slate-300 text-slate-800 font-bold text-sm hover:border-indigo-400 hover:bg-slate-50">
+            <span>🚶</span> <span>Jump to Learner Walkthrough (Slide 9)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="stagger-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-sky-700 mb-1">1. Monetisation &amp; UPI Checkout</div>
+          <div class="text-sm font-bold text-slate-900 mb-1.5">Zoho Commerce Storefront</div>
+          <p class="text-xs text-slate-600 leading-relaxed">Learners browse CNC, Robotics, Pneumatics, and Zoho courses, register with their college at checkout, pay via UPI, and optionally renew for a follow-up term. Abhyaz assigns each college an ID for tracking.</p>
+        </div>
+
+        <div class="stagger-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 mb-1">2. Enrolment Management</div>
+          <div class="text-sm font-bold text-slate-900 mb-1.5">CRM → Zoho Flow → Zoho Learn</div>
+          <p class="text-xs text-slate-600 leading-relaxed">Paid orders create CRM Contacts and Deals, trigger Zoho Flow to enrol learners in Zoho Learn, track course study, and mark deals Closed Won on completion.</p>
+        </div>
+
+        <div class="stagger-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 mb-1">3. College Reporting &amp; Governance</div>
+          <div class="text-sm font-bold text-slate-900 mb-1.5">Filtered Zoho Analytics</div>
+          <p class="text-xs text-slate-600 leading-relaxed">One College Progress dashboard shared per College ID with View + Export only (no Edit), with paid seats or scheduled reports per your Zoho plan.</p>
+        </div>
+
+        <div class="stagger-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-violet-700 mb-1">4. Optional College Portal</div>
+          <div class="text-sm font-bold text-slate-900 mb-1.5">Quoted Per College Add-On</div>
+          <p class="text-xs text-slate-600 leading-relaxed">Optional per-college learning portal with its own login, showing only the courses shared with that college. Portal users view content only; college managers see progress through Zoho Analytics or as internal users.</p>
+        </div>
+      </div>
+    </div>
+
+</section>
+
+ <!-- SLIDE 2: REALISTIC ZOHO COMMERCE STOREFRONT SCREENSHOT -->
+
+<section class="slide" data-slide="2">
+    <div class="mb-3">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-0.5">Slide 02 · Zoho Commerce Platform Screenshot</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Real-Time Zoho Commerce Course Storefront</h2>
+      <p class="text-sm text-slate-600 mt-0.5">Learners search and compare CNC, Robotics, Pneumatics, and Zoho tool courses on the Zoho Commerce storefront.</p>
+    </div>
+
+   <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/80 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-3.5 mb-4" style="display:none" aria-hidden="true">
+      <div class="flex items-center justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+          <span class="live-dot" id="dot-2"></span> <span>Narration</span>
+        </div>
+        <button onclick="replayCurrentNarration()" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+          <span>🔊</span> <span>Replay</span>
+        </button>
+      </div>
+      <p id="narration-2" class="text-sm text-slate-800">
+        This is the online course store. A learner can search for courses such as CNC, Robotics, Pneumatics and Zoho tools. Each course shows its price per seat. In this example, the learner chooses Robotics.
+      </p>
+      <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-2">
+        <div id="prog-2" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500"></div>
+      </div>
+    </div>
+
+    <div class="zoho-window">
+      <div class="zoho-titlebar">
+        <div class="flex items-center gap-2 text-xs font-semibold">
+          <span class="flex gap-1.5"><i class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></i></span>
+          <span class="ml-2 hidden sm:inline">Zoho Commerce · Storefront &amp; Catalog Admin</span>
+        </div>
+        <span class="bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-lg text-xs font-mono text-sky-300 truncate">https://store.abhyaz.zohocommerce.com/courses</span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 whitespace-nowrap">College user</span>
+      </div>
+
+      <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="px-2.5 py-1 rounded-lg bg-orange-600 text-white font-extrabold text-xs">Zoho Commerce</span>
+          <div class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-600">
+            <span class="text-indigo-700 font-bold border-b-2 border-indigo-600 pb-0.5">Products (4)</span>
+            <span>College Cohorts</span>
+            <span>Payment Gateways (UPI)</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-600">
+          <span>🔍</span>
+          <span>Search: <strong>Robotics, CNC, Pneumatics, Zoho...</strong></span>
+        </div>
+      </div>
+
+      <div class="p-5 bg-slate-50/70">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="stagger-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <span class="w-9 h-9 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-base">⚙️</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800">CAD / CAM</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 mb-1">CNC Machining</h3>
+              <p class="text-xs text-slate-600 leading-relaxed mb-3">G-code programming, toolpath simulation, and CNC lab exercises.</p>
+            </div>
+            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-sm font-extrabold text-slate-900">₹2,499 <span class="text-[11px] font-medium text-slate-500">/ seat</span></span>
+              <span class="text-xs font-bold text-sky-600">Select →</span>
+            </div>
+          </div>
+
+          <div class="stagger-2 bg-gradient-to-b from-emerald-50 to-white border-2 border-emerald-500 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <span class="w-9 h-9 rounded-xl bg-emerald-100 border border-emerald-300 flex items-center justify-center text-base">🤖</span>
+                <span class="pulse-ring-badge px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-600 text-white">✓ Selected</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 mb-1">Robotics</h3>
+              <p class="text-xs text-slate-600 leading-relaxed mb-3">Industrial robotics kinematics, sensors, and automated workcell workflows.</p>
+            </div>
+            <div class="pt-2.5 border-t border-emerald-200 flex items-center justify-between">
+              <span class="text-sm font-extrabold text-emerald-900">₹2,999 <span class="text-[11px] font-medium text-emerald-700">/ seat</span></span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold">In Cart</span>
+            </div>
+          </div>
+
+          <div class="stagger-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <span class="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-base">🔧</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-800">Automation</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 mb-1">Pneumatics</h3>
+              <p class="text-xs text-slate-600 leading-relaxed mb-3">Pneumatic valves, actuators, electro-pneumatic circuits, and diagnostics.</p>
+            </div>
+            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-sm font-extrabold text-slate-900">₹1,999 <span class="text-[11px] font-medium text-slate-500">/ seat</span></span>
+              <span class="text-xs font-bold text-indigo-600">Select →</span>
+            </div>
+          </div>
+
+          <div class="stagger-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <span class="w-9 h-9 rounded-xl bg-violet-50 border border-violet-200 flex items-center justify-center text-base">💼</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-violet-100 text-violet-800">Zoho Suite</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 mb-1">Zoho Tool Courses</h3>
+              <p class="text-xs text-slate-600 leading-relaxed mb-3">Applied Zoho CRM, Flow, Creator, and Analytics business automation.</p>
+            </div>
+            <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-sm font-extrabold text-slate-900">₹1,499 <span class="text-[11px] font-medium text-slate-500">/ seat</span></span>
+              <span class="text-xs font-bold text-violet-600">Select →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</section>
+
+  <!-- SLIDE 3: FREE COURSE PREVIEW MODEL (SEPARATE PREVIEW COURSE IN ZOHO LEARN) -->
+  <section class="slide" data-slide="3">
+    <div class="mb-3">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-0.5">Slide 03 · Free Course Preview &amp; Trial Funnel</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Experience Before You Buy: Free Course Preview Model</h2>
+      <p class="text-sm text-slate-600 mt-0.5">Separate 2-lesson preview courses on Zoho Learn let learners and colleges evaluate quality before purchasing the full course.</p>
+    </div>
+
+    <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/80 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-3.5 mb-4" style="display:none" aria-hidden="true">
+      <div class="flex items-center justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+          <span class="live-dot" id="dot-3"></span> <span>Narration</span>
+        </div>
+        <button onclick="replayCurrentNarration()" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+          <span>🔊</span> <span>Replay</span>
+        </button>
+      </div>
+      <p id="narration-3" class="text-sm text-slate-800">
+        Before paying, people can try a free preview. Each course has a small separate preview course with two lessons: an introduction and a sample practical lesson. The full course stays locked until payment is confirmed. We use two separate courses because Zoho Learn cannot lock single lessons inside one course. This keeps the paid course safe, and the preview open to everyone.
+      </p>
+      <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-2">
+        <div id="prog-3" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500"></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
+      <!-- Free Access Card -->
+      <div class="stagger-1 lg:col-span-4 exec-card p-4 border-t-4 border-t-sky-500 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-sky-100 text-sky-800">FREE ACCESS · SEPARATE COURSE</span>
+            <span class="text-base float-slow">👀</span>
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900 mb-1">Course Preview (2 Lessons)</h3>
+          <p class="text-xs text-slate-600 leading-relaxed mb-3">
+            Separate Zoho Learn course listing for open self-enrolment—avoids relying on lesson-level locking, since Zoho Learn does not lock individual lessons inside a course.
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-sky-50/80 border border-sky-200 flex items-center justify-between">
+              <span class="font-bold text-slate-800">Lesson 01: Introduction</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">UNLOCKED</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-sky-50/80 border border-sky-200 flex items-center justify-between">
+              <span class="font-bold text-slate-800">Lesson 02: Sample Practical Lesson</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">UNLOCKED</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-sky-700">
+          <span>CRM Funnel Tag: Trial Enrolled</span>
+          <span>₹0 · No Payment</span>
+        </div>
+      </div>
+
+      <!-- Paid Access Card -->
+      <div class="stagger-2 lg:col-span-4 exec-card p-4 border-t-4 border-t-emerald-600 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="shimmer-badge px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-600 text-white">PAID ACCESS · FULL COURSE</span>
+            <span class="text-base float-slow-delay">🎓</span>
+          </div>
+          <h3 class="text-base font-extrabold text-slate-900 mb-1">Full Course (Unlocked Post-Pay)</h3>
+          <p class="text-xs text-slate-600 leading-relaxed mb-3">
+            Separate Zoho Learn course automatically assigned via Zoho Flow only after Zoho Commerce UPI or college seat payment confirmation.
+          </p>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200 flex items-center justify-between">
+              <span class="font-bold text-slate-800">All Theory, Lab &amp; Simulation Modules</span>
+              <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold text-[10px]">FULL ACCESS</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200 flex items-center justify-between">
+              <span class="font-bold text-slate-800">Assessments &amp; Verified Certificate</span>
+              <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold text-[10px]">INCLUDED</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-700">
+          <span>CRM Funnel Tag: Converted</span>
+          <span>Payment → Full Enrolment</span>
+        </div>
+      </div>
+
+      <!-- Commercial Options Table -->
+      <div class="stagger-3 lg:col-span-4 exec-card p-4 flex flex-col justify-between">
+        <div>
+          <h3 class="text-sm font-extrabold text-slate-900 mb-2">Dual-Product &amp; Commercial Options</h3>
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 uppercase text-[10px]">
+                <th class="py-2 px-2 rounded-l-lg">Tier / Option</th>
+                <th class="py-2 px-2">Zoho Learn Asset</th>
+                <th class="py-2 px-2 rounded-r-lg">CRM Stage</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr>
+                <td class="py-2.5 px-2 font-bold text-sky-700">Free Preview</td>
+                <td class="py-2.5 px-2 text-slate-700">2-Lesson Preview Course</td>
+                <td class="py-2.5 px-2"><span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 font-bold text-[10px]">Trial Enrolled</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-2 font-bold text-emerald-700">Individual Purchase</td>
+                <td class="py-2.5 px-2 text-slate-700">Full Course (1 Seat)</td>
+                <td class="py-2.5 px-2"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Converted</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-2 font-bold text-indigo-700">College Subscription</td>
+                <td class="py-2.5 px-2 text-slate-700">Full Course (Cohort Seats)</td>
+                <td class="py-2.5 px-2"><span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 font-bold text-[10px]">Converted</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-3 p-2.5 rounded-xl bg-amber-50 border-l-4 border-amber-500 text-[11px] text-amber-950 leading-snug">
+          <strong>Platform Architecture Note:</strong> Separating Preview vs. Full courses ensures clean access boundaries without lesson-level locking.
+        </div>
+      </div>
+    </div>
+
+    <!-- Animated 5-Step Trial-to-Paid Customer Journey -->
+    <div class="exec-card p-4 bg-gradient-to-r from-white via-indigo-50/40 to-emerald-50/40 relative overflow-hidden">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Animated Trial-to-Paid Conversion Journey</span>
+        <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded-full">Zero-Friction Preview → Paid Upgrade</span>
+      </div>
+
+      <div class="relative">
+        <svg class="hidden md:block absolute top-1/2 left-6 right-6 -translate-y-1/2 w-[calc(100%-3rem)] h-6 pointer-events-none" viewBox="0 0 1000 24" preserveAspectRatio="none">
+          <line x1="20" y1="12" x2="980" y2="12" stroke="#6366f1" stroke-width="3" class="dash-flow"/>
+        </svg>
+
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 relative z-10">
+          <div class="funnel-step-1 bg-white border border-sky-200 rounded-xl p-3 text-center">
+            <div class="w-8 h-8 mx-auto mb-1.5 rounded-full bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center">01</div>
+            <div class="text-xs font-extrabold text-slate-900">1. Browse</div>
+            <div class="text-[11px] text-slate-600 mt-0.5">Explore catalogue &amp; click Free Preview</div>
+          </div>
+
+          <div class="funnel-step-2 bg-white border border-sky-300 rounded-xl p-3 text-center">
+            <div class="w-8 h-8 mx-auto mb-1.5 rounded-full bg-sky-600 text-white font-extrabold text-xs flex items-center justify-center">02</div>
+            <div class="text-xs font-extrabold text-slate-900">2. Preview</div>
+            <div class="text-[11px] text-slate-600 mt-0.5">Access Intro + Sample Practical Lesson</div>
+          </div>
+
+          <div class="funnel-step-3 bg-white border border-indigo-200 rounded-xl p-3 text-center">
+            <div class="w-8 h-8 mx-auto mb-1.5 rounded-full bg-indigo-100 text-indigo-700 font-extrabold text-xs flex items-center justify-center">03</div>
+            <div class="text-xs font-extrabold text-slate-900">3. Evaluate</div>
+            <div class="text-[11px] text-slate-600 mt-0.5">Assess hands-on lab depth &amp; fit</div>
+          </div>
+
+          <div class="funnel-step-4 bg-white border border-amber-300 rounded-xl p-3 text-center">
+            <div class="w-8 h-8 mx-auto mb-1.5 rounded-full bg-amber-500 text-white font-extrabold text-xs flex items-center justify-center">04</div>
+            <div class="text-xs font-extrabold text-slate-900">4. Purchase</div>
+            <div class="text-[11px] text-slate-600 mt-0.5">Individual UPI or College Seat Order</div>
+          </div>
+
+          <div class="funnel-step-5 bg-gradient-to-b from-emerald-50 to-white border-2 border-emerald-500 rounded-xl p-3 text-center">
+            <div class="w-8 h-8 mx-auto mb-1.5 rounded-full bg-emerald-600 text-white font-extrabold text-xs flex items-center justify-center">05</div>
+            <div class="text-xs font-extrabold text-emerald-900">5. Unlock Full</div>
+            <div class="text-[11px] text-emerald-800 mt-0.5">Zoho Flow assigns Full Course</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+ <!-- SLIDE 3: ZOHO COMMERCE CHECKOUT & UPI SCREENSHOT -->
+
+<section class="slide" data-slide="4">
+    <div class="mb-3">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-0.5">Slide 04 · Checkout, UPI &amp; Optional Renewal Tag</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Zoho Commerce Checkout: Learner Registration &amp; UPI</h2>
+      <p class="text-sm text-slate-600 mt-0.5">The learner registers with their college details at checkout and completes UPI payment. Abhyaz assigns the College ID for tracking, and the order is marked as a new enrolment or an optional term renewal.</p>
+    </div>
+
+   <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/80 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-3.5 mb-4" style="display:none" aria-hidden="true">
+      <div class="flex items-center justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+          <span class="live-dot" id="dot-4"></span> <span>Narration</span>
+        </div>
+        <button onclick="replayCurrentNarration()" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+          <span>🔊</span> <span>Replay</span>
+        </button>
+      </div>
+      <p id="narration-4" class="text-sm text-slate-800">
+        At checkout, the learner registers with their name and college. Abhyaz then assigns a college ID, which is used to track the learner and their college. The learner pays by UPI. The order can also be marked as a renewal for the next term.
+      </p>
+      <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-2">
+        <div id="prog-4" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500"></div>
+      </div>
+    </div>
+
+    <div class="zoho-window">
+      <div class="zoho-titlebar">
+        <div class="flex items-center gap-2 text-xs font-semibold">
+          <span class="flex gap-1.5"><i class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></i></span>
+          <span class="ml-2 hidden sm:inline">Zoho Commerce Checkout · UPI Gateway</span>
+        </div>
+        <span class="bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-lg text-xs font-mono text-sky-300 truncate">https://store.abhyaz.zohocommerce.com/checkout/upi</span>
+        <span class="pulse-ring-badge px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 whitespace-nowrap">✓ UPI Paid</span>
+      </div>
+
+      <div class="p-5 grid grid-cols-1 lg:grid-cols-12 gap-5 bg-slate-50/50">
+        <div class="stagger-1 lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-slate-900">Checkout Order &amp; Registration Form</h3>
+            <span class="text-xs font-mono text-slate-500">Order #ABZ-9041</span>
+          </div>
+          <table class="w-full text-sm text-left">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 text-xs uppercase">
+                <th class="py-2 px-3 rounded-l-lg">Checkout Field</th>
+                <th class="py-2 px-3 rounded-r-lg">Captured Value</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr>
+                <td class="py-2.5 px-3 text-slate-600 font-medium">Course Selected</td>
+                <td class="py-2.5 px-3 font-bold text-slate-900">Robotics (₹2,999 / seat)</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 text-slate-600 font-medium">Registered College</td>
+                <td class="py-2.5 px-3 font-bold text-indigo-700">St. Xavier College · College ID assigned by Abhyaz: CLG-001</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 text-slate-600 font-medium">Enrolment Type</td>
+                <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded-md text-xs font-bold bg-sky-100 text-sky-800">New Enrolment</span> <span class="text-xs text-slate-500">(or 🔄 Optional Renewal)</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 text-slate-600 font-medium">Payment Mode</td>
+                <td class="py-2.5 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✓ UPI Instant Pay Confirmed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stagger-2 lg:col-span-5 bg-gradient-to-br from-sky-50 to-indigo-50 border border-sky-200 rounded-2xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="text-[11px] font-extrabold uppercase tracking-wider text-sky-700 mb-1">Live JSON Webhook to Zoho CRM</div>
+            <pre class="bg-slate-900 text-sky-300 text-[11px] font-mono p-3 rounded-xl overflow-x-auto leading-relaxed mb-3">{
+
+"student": "Ananya Nair",
+"course": "Robotics",
+"college_id": "CLG-001",
+"payment\_mode": "UPI",
+"renewal_flag": "Optional\_If\_Needed"
+}</pre>
+<div class="text-xs text-slate-700 flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 border border-sky-200">Abhyaz team</span>
+<span>receives real-time CRM deal & contact sync.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</section>
+
+ <!-- SLIDE 4: ZOHO CRM SCREENSHOT (DEAL PIPELINE + RENEWAL FLAG) -->
+
+<section class="slide" data-slide="5">
+    <div class="mb-3">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-0.5">Slide 05 · Zoho CRM Platform Screenshot</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Zoho CRM Contact &amp; Deal Creation</h2>
+      <p class="text-sm text-slate-600 mt-0.5">Payment confirmation creates a Contact and Deal in Zoho CRM tagged with College ID and optional renewal tracking.</p>
+    </div>
+
+   <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/80 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-3.5 mb-4" style="display:none" aria-hidden="true">
+      <div class="flex items-center justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+          <span class="live-dot" id="dot-5"></span> <span>Narration</span>
+        </div>
+        <button onclick="replayCurrentNarration()" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+          <span>🔊</span> <span>Replay</span>
+        </button>
+      </div>
+      <p id="narration-5" class="text-sm text-slate-800">
+        When payment is confirmed, Zoho CRM creates a contact and a deal for the learner, tagged with the college ID. The Abhyaz team can follow each deal from payment, to enrolment, to completion. A renewal option is there if the learner continues into another term.
+      </p>
+      <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-2">
+        <div id="prog-5" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500"></div>
+      </div>
+    </div>
+
+    <div class="zoho-window">
+      <div class="zoho-titlebar">
+        <div class="flex items-center gap-2 text-xs font-semibold">
+          <span class="flex gap-1.5"><i class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></i></span>
+          <span class="ml-2 hidden sm:inline">Zoho CRM · Deals &amp; Contacts Module</span>
+        </div>
+        <span class="bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-lg text-xs font-mono text-sky-300 truncate">https://crm.zoho.com/crm/org/tab/Deals/ABZ-9041</span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800 border border-sky-300 whitespace-nowrap">Abhyaz team</span>
+      </div>
+
+      <div class="bg-slate-50 border-b border-slate-200 px-5 py-3">
+        <div class="text-[11px] font-extrabold uppercase text-slate-500 mb-2">CRM Deal Pipeline Blueprint</div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-bold text-center">
+          <div class="py-1.5 px-2 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">1. Checkout</div>
+          <div class="py-1.5 px-2 rounded-lg bg-emerald-600 text-white shadow-sm">2. UPI Verified ⚡</div>
+          <div class="py-1.5 px-2 rounded-lg bg-sky-100 text-sky-800 border border-sky-300">3. Learn Enrolled</div>
+          <div class="py-1.5 px-2 rounded-lg bg-indigo-100 text-indigo-800 border border-indigo-300">4. Closed Won 🎓</div>
+          <div class="py-1.5 px-2 rounded-lg bg-teal-50 text-teal-800 border border-dashed border-teal-400">5. Renewal (If Needed)</div>
+        </div>
+      </div>
+
+      <div class="p-5 overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead>
+            <tr class="bg-slate-100 text-slate-600 text-xs uppercase">
+              <th class="py-2.5 px-3 rounded-l-lg">CRM Contact &amp; Deal</th>
+              <th class="py-2.5 px-3">College ID</th>
+              <th class="py-2.5 px-3">Deal Stage</th>
+              <th class="py-2.5 px-3">Renewal Option</th>
+              <th class="py-2.5 px-3 rounded-r-lg">Owner</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr class="bg-emerald-50/40">
+              <td class="py-3 px-3">
+                <div class="font-bold text-slate-900">Ananya Nair · Robotics</div>
+                <div class="text-xs text-slate-500">Order #ABZ-9041 · ₹2,999 UPI</div>
+              </td>
+              <td class="py-3 px-3"><span class="font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">CLG-001</span></td>
+              <td class="py-3 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Payment Verified → Flow</span></td>
+              <td class="py-3 px-3 text-xs font-semibold text-slate-600">Standard (No renewal required)</td>
+              <td class="py-3 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800">Abhyaz team</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3">
+                <div class="font-bold text-slate-900">Karthik V. · Robotics</div>
+                <div class="text-xs text-slate-500">Order #ABZ-9038 · ₹2,999 UPI</div>
+              </td>
+              <td class="py-3 px-3"><span class="font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">CLG-003</span></td>
+              <td class="py-3 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">Closed Won 🎓</span></td>
+              <td class="py-3 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-100 text-teal-800">🔄 Term Renewal Opt-In</span></td>
+              <td class="py-3 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800">Abhyaz team</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+</section>
+
+ <!-- SLIDE 5: ZOHO FLOW & LEARN ENROLMENT MANAGEMENT SCREENSHOT -->
+
+<section class="slide" data-slide="6">
+    <div class="mb-3">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-0.5">Slide 06 · Zoho Flow &amp; Zoho Learn Screenshots</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Zoho Flow &amp; Zoho Learn Enrolment Management</h2>
+      <p class="text-sm text-slate-600 mt-0.5">Zoho Flow automates learner enrolment inside Zoho Learn, syncs certificate completion to Closed Won, and handles optional renewals.</p>
+    </div>
+
+   <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/80 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-3.5 mb-4" style="display:none" aria-hidden="true">
+      <div class="flex items-center justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+          <span class="live-dot" id="dot-6"></span> <span>Narration</span>
+        </div>
+        <button onclick="replayCurrentNarration()" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+          <span>🔊</span> <span>Replay</span>
+        </button>
+      </div>
+      <p id="narration-6" class="text-sm text-slate-800">
+        Zoho Flow does the routine work automatically. When a deal is paid, it creates the learner's account, enrols them in the course, and tracks progress. When the learner finishes and receives the certificate, the deal is marked Closed Won. If a renewal is needed, access is extended.
+      </p>
+      <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-2">
+        <div id="prog-6" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500"></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div class="stagger-1 lg:col-span-6 zoho-window">
+        <div class="zoho-titlebar">
+          <span class="text-xs font-bold">⚡ Zoho Flow · Enrolment &amp; Renewal Builder</span>
+          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[11px] font-bold">Flow Active</span>
+        </div>
+        <div class="p-4 bg-slate-900 text-slate-100">
+          <svg viewBox="0 0 420 215" class="w-full h-auto">
+            <path d="M95,45 L210,45 L325,45" fill="none" stroke="#f59e0b" stroke-width="3" class="dash-flow"/>
+            <path d="M325,45 L325,135 L210,135" fill="none" stroke="#38bdf8" stroke-width="3" class="dash-flow"/>
+            <path d="M210,135 L95,135" fill="none" stroke="#14b8a6" stroke-width="2.5" stroke-dasharray="5 5" class="dash-flow"/>
+
+            <rect x="15" y="18" width="115" height="54" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="72" y="40" text-anchor="middle" font-size="10.5" font-weight="800" fill="#fde047">⚡ CRM Deal Paid</text>
+            <text x="72" y="56" text-anchor="middle" font-size="9" fill="#cbd5e1">Trigger Webhook</text>
+
+            <rect x="152" y="18" width="115" height="54" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="209" y="40" text-anchor="middle" font-size="10.5" font-weight="800" fill="#7dd3fc">👤 Create User</text>
+            <text x="209" y="56" text-anchor="middle" font-size="9" fill="#cbd5e1">Zoho Learn Portal</text>
+
+            <rect x="290" y="18" width="115" height="54" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="347" y="40" text-anchor="middle" font-size="10.5" font-weight="800" fill="#6ee7b7">📚 Enrol Course</text>
+            <text x="347" y="56" text-anchor="middle" font-size="9" fill="#cbd5e1">Assign Robotics</text>
+
+            <rect x="152" y="108" width="145" height="54" rx="10" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+            <text x="224" y="130" text-anchor="middle" font-size="10.5" font-weight="800" fill="#6ee7b7">🎓 Cert → Closed Won</text>
+            <text x="224" y="146" text-anchor="middle" font-size="9" fill="#cbd5e1">Sync Completion to CRM</text>
+
+            <rect x="15" y="108" width="115" height="54" rx="10" fill="#134e4a" stroke="#2dd4bf" stroke-width="2"/>
+            <text x="72" y="130" text-anchor="middle" font-size="10" font-weight="800" fill="#99f6e4">🔄 If Renewal</text>
+            <text x="72" y="146" text-anchor="middle" font-size="9" fill="#ccfbf1">Extend Term Access</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="stagger-2 lg:col-span-6 zoho-window">
+        <div class="zoho-titlebar">
+          <span class="text-xs font-bold">📚 Zoho Learn · Course Enrolment Console</span>
+          <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[11px] font-bold">College user</span>
+        </div>
+        <div class="p-4 bg-white">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs font-bold text-slate-500">COURSE TRACK</div>
+              <div class="text-sm font-extrabold text-slate-900">Industrial Robotics &amp; Automation</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold">Auto-Enrolled</span>
+          </div>
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 uppercase">
+                <th class="py-2 px-2.5 rounded-l-lg">Learner</th>
+                <th class="py-2 px-2.5">College</th>
+                <th class="py-2 px-2.5">Progress</th>
+                <th class="py-2 px-2.5 rounded-r-lg">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr>
+                <td class="py-2.5 px-2.5 font-bold text-slate-900">Ananya Nair</td>
+                <td class="py-2.5 px-2.5 font-mono text-indigo-700">CLG-001</td>
+                <td class="py-2.5 px-2.5">
+                  <div class="w-20 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="bar-fill-anim h-full w-full bg-emerald-500"></div>
+                  </div>
+                </td>
+                <td class="py-2.5 px-2.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">🎓 Certified</span></td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-2.5 font-bold text-slate-900">Karthik V.</td>
+                <td class="py-2.5 px-2.5 font-mono text-indigo-700">CLG-003</td>
+                <td class="py-2.5 px-2.5">
+                  <div class="w-20 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="bar-fill-anim h-full w-3/4 bg-sky-500"></div>
+                  </div>
+                </td>
+                <td class="py-2.5 px-2.5"><span class="px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 font-bold">🔄 Renewed Term</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+</section>
+
+ <!-- SLIDE 6: ZOHO ANALYTICS SCREENSHOT (THREE FILTERED COLLEGES) -->
+
+<section class="slide" data-slide="7">
+    <div class="mb-3">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-0.5">Slide 07 · Zoho Analytics Platform Screenshot</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">College Progress Dashboard: Three Filtered Colleges</h2>
+      <p class="text-sm text-slate-600 mt-0.5">
+        One Abhyaz workspace and one <strong>"College Progress"</strong> dashboard shared three times by College ID. <em class="text-slate-500">(All numbers are samples.)</em>
+      </p>
+    </div>
+
+   <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/80 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-3.5 mb-4" style="display:none" aria-hidden="true">
+      <div class="flex items-center justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+          <span class="live-dot" id="dot-7"></span> <span>Narration</span>
+        </div>
+        <button onclick="replayCurrentNarration()" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+          <span>🔊</span> <span>Replay</span>
+        </button>
+      </div>
+      <p id="narration-7" class="text-sm text-slate-800">
+        Colleges need to see how their students are doing. We use one College Progress dashboard and share it separately with each college. Each college sees only its own students. They can view and export, but cannot edit. The numbers shown here are samples. Whether each college user needs a paid Analytics seat depends on the Zoho plan.
+      </p>
+      <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-2">
+        <div id="prog-7" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500"></div>
+      </div>
+    </div>
+
+    <div class="zoho-window mb-4">
+      <div class="zoho-titlebar">
+        <div class="flex items-center gap-2 text-xs font-semibold">
+          <span class="flex gap-1.5"><i class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></i></span>
+          <span class="ml-2 hidden sm:inline">Zoho Analytics · "College Progress" Dashboard</span>
+        </div>
+        <span class="bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-lg text-xs font-mono text-sky-300 truncate">https://analytics.zoho.com/workspace/abhyaz/college-progress</span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-100 text-sky-800 border border-sky-300 whitespace-nowrap">Abhyaz team</span>
+      </div>
+
+      <div class="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50/50">
+        <div class="stagger-1 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <h3 class="text-sm font-bold text-slate-900">St. Xavier College</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">CLG-001</span>
+          </div>
+          <div class="text-2xl font-extrabold text-slate-900">120 <span class="text-xs font-semibold text-slate-500">sample learners</span></div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden my-2.5">
+            <div class="bar-fill-anim h-full w-4/5 bg-gradient-to-r from-sky-500 to-emerald-500"></div>
+          </div>
+          <div class="text-xs font-bold text-emerald-700">Filter: CLG-001 · View + Export</div>
+        </div>
+
+        <div class="stagger-2 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <h3 class="text-sm font-bold text-slate-900">College ABC (pilot)</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">CLG-002</span>
+          </div>
+          <div class="text-2xl font-extrabold text-slate-900">25 <span class="text-xs font-semibold text-slate-500">sample learners</span></div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden my-2.5">
+            <div class="bar-fill-anim h-full w-1/3 bg-gradient-to-r from-sky-500 to-indigo-500"></div>
+          </div>
+          <div class="text-xs font-bold text-emerald-700">Filter: CLG-002 · View + Export</div>
+        </div>
+
+        <div class="stagger-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <h3 class="text-sm font-bold text-slate-900">Sri Ram Institute</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">CLG-003</span>
+          </div>
+          <div class="text-2xl font-extrabold text-slate-900">60 <span class="text-xs font-semibold text-slate-500">sample learners</span></div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden my-2.5">
+            <div class="bar-fill-anim h-full w-3/5 bg-gradient-to-r from-indigo-500 to-teal-500"></div>
+          </div>
+          <div class="text-xs font-bold text-emerald-700">Filter: CLG-003 · View + Export</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="exec-card p-4">
+        <h3 class="text-sm font-bold text-slate-900 mb-2">Roles &amp; Access</h3>
+        <table class="w-full text-xs text-left">
+          <thead>
+            <tr class="bg-slate-100 text-slate-600 uppercase">
+              <th class="py-2 px-2.5 rounded-l-lg">Role</th>
+              <th class="py-2 px-2.5">Group</th>
+              <th class="py-2 px-2.5 rounded-r-lg">Permission</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr>
+              <td class="py-2 px-2.5 font-bold text-slate-900">Abhyaz admin</td>
+              <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800">Abhyaz team</span></td>
+              <td class="py-2 px-2.5 text-slate-700">Full + Edit + Share</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-2.5 font-bold text-slate-900">Abhyaz analyst</td>
+              <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800">Abhyaz team</span></td>
+              <td class="py-2 px-2.5 text-slate-700">Full + Edit reports</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-2.5 font-bold text-slate-900">College coordinator</td>
+              <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">College user</span></td>
+              <td class="py-2 px-2.5 font-bold text-emerald-700">View + Export only</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="mt-2.5 p-2.5 rounded-xl bg-amber-50 border-l-4 border-amber-500 text-xs text-amber-950">
+          <strong>No Edit for Colleges:</strong> Avoid giving Edit rights so colleges cannot change reports.
+        </div>
+      </div>
+
+      <div class="exec-card p-4 flex flex-col justify-between">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 mb-2">4-Step Setup &amp; Zoho Plan Note</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="text-[10px] font-extrabold uppercase text-teal-700">1. Share</div>
+              <div class="text-[11px] text-slate-700 mt-0.5">Open dashboard &amp; share.</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="text-[10px] font-extrabold uppercase text-teal-700">2. Email</div>
+              <div class="text-[11px] text-slate-700 mt-0.5">Add coordinator email.</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="text-[10px] font-extrabold uppercase text-teal-700">3. Filter</div>
+              <div class="text-[11px] text-slate-700 mt-0.5">Filter by College ID.</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="text-[10px] font-extrabold uppercase text-teal-700">4. Rights</div>
+              <div class="text-[11px] text-slate-700 mt-0.5">Set View + Export.</div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-2.5 p-2.5 rounded-xl bg-sky-50 border-l-4 border-sky-600 text-xs text-slate-800 leading-relaxed">
+          Whether each <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">College user</span> needs a paid Analytics seat or can get scheduled emailed reports instead depends on your Zoho plan.
+        </div>
+      </div>
+    </div>
+
+</section>
+
+ <!-- SLIDE 7: OPTIONAL DEDICATED PORTAL SCREENSHOT -->
+
+<section class="slide" data-slide="8">
+    <div class="mb-3">
+      <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600 mb-0.5">Slide 08 · Optional Add-On Portal Screenshot</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Optional Dedicated Portal (Additional Cost Per College)</h2>
+      <p class="text-sm text-slate-600 mt-0.5">
+        Available as an <strong>optional add-on at an additional cost quoted per college</strong>—giving the college's learners their own learning space. Zoho confirmed portal users can only view the content shared with them, so college managers who need to see learner progress are added as internal users.
+      </p>
+    </div>
+
+   <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/80 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-3.5 mb-4" style="display:none" aria-hidden="true">
+      <div class="flex items-center justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+          <span class="live-dot" id="dot-8"></span> <span>Narration</span>
+        </div>
+        <button onclick="replayCurrentNarration()" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+          <span>🔊</span> <span>Replay</span>
+        </button>
+      </div>
+      <p id="narration-8" class="text-sm text-slate-800">
+        Some colleges may want their own portal. This is an optional extra, priced for each college. It gives the college's learners their own login, and shows only the courses shared with that college. Portal users can only view that content. They cannot see learner reports. So college managers see progress through the Zoho Analytics dashboard, or are added as internal users. The college never sees other colleges, cannot edit courses, and cannot see Abhyaz's CRM or billing.
+      </p>
+      <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-2">
+        <div id="prog-8" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-teal-500"></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div class="stagger-1 lg:col-span-7 zoho-window">
+        <div class="zoho-titlebar">
+          <div class="flex items-center gap-2 text-xs font-semibold">
+            <span class="flex gap-1.5"><i class="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></i><i class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></i></span>
+            <span class="ml-2 hidden sm:inline">Optional College Learning Portal</span>
+          </div>
+          <span class="bg-slate-900/80 border border-slate-700 px-3 py-1 rounded-lg text-xs font-mono text-sky-300 truncate">https://portal.stxavier.edu.in</span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-violet-100 text-violet-900 border border-violet-300 whitespace-nowrap">Optional Add-On</span>
+        </div>
+
+        <div class="p-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <strong class="text-sm text-slate-900">St. Xavier College (CLG-001)</strong>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Support: support@abhyaz.com</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 mb-3">
+          <div class="bg-sky-50 border border-sky-200 rounded-xl p-2.5 text-center">
+            <div class="text-xl font-extrabold text-sky-700">2</div>
+            <div class="text-[11px] font-semibold text-slate-600">Courses Shared</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 text-center">
+            <div class="text-xl font-extrabold text-emerald-700">120</div>
+            <div class="text-[11px] font-semibold text-slate-600">Learners Invited</div>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-center">
+            <div class="text-sm font-extrabold text-amber-700 leading-7">View only</div>
+            <div class="text-[11px] font-semibold text-slate-600">Portal Access</div>
+          </div>
+        </div>
+        <table class="w-full text-xs text-left mb-3">
+          <thead>
+            <tr class="bg-slate-100 text-slate-600 uppercase">
+              <th class="py-2 px-2.5 rounded-l-lg">Course</th>
+              <th class="py-2 px-2.5">Shared With</th>
+              <th class="py-2 px-2.5 rounded-r-lg">Access</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr>
+              <td class="py-2 px-2.5 font-semibold">Robotics</td>
+              <td class="py-2 px-2.5">St. Xavier learners only</td>
+              <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800">View content</span></td>
+            </tr>
+            <tr>
+              <td class="py-2 px-2.5 font-semibold">CNC Machining</td>
+              <td class="py-2 px-2.5">St. Xavier learners only</td>
+              <td class="py-2 px-2.5"><span class="px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800">View content</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="p-2.5 rounded-xl bg-amber-50 border-l-4 border-amber-500 text-xs text-amber-950 mb-3"><strong>Progress reports:</strong> portal users cannot see learner reports. The college manager sees progress through the Zoho Analytics dashboard (Slide 7), or is added as an internal user.</div>
+        <div class="p-2.5 rounded-xl bg-violet-50 border-l-4 border-violet-600 text-xs text-indigo-950">
+            <strong>Optional Tier:</strong> Additional cost <strong>quoted per college</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="stagger-2 lg:col-span-5 flex flex-col gap-3.5">
+        <div class="exec-card p-4 border-t-4 border-t-emerald-600">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-slate-900">Gets (Optional Portal)</h3>
+            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">Included</span>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-slate-700">
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✅</span> Own login for the college's learners</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✅</span> Only the courses shared with that college</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✅</span> View access to the shared content</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-600 font-bold">✅</span> Other colleges stay hidden (invited users only)</li>
+          </ul>
+        </div>
+        <div class="exec-card p-4 border-t-4 border-t-rose-600">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-slate-900">Does Not Get</h3>
+            <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800">Excluded</span>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-slate-700">
+            <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">🚫</span> Learner reports (not visible to portal users)</li>
+            <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">🚫</span> Course editing</li>
+            <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">🚫</span> Other colleges' data</li>
+            <li class="flex items-center gap-2"><span class="text-rose-600 font-bold">🚫</span> Abhyaz CRM, billing, and settings</li>
+          </ul>
+        </div>
+        <div class="exec-card p-4 border-t-4 border-t-indigo-600">
+          <h3 class="text-sm font-bold text-slate-900 mb-1">College manager: seeing learner progress</h3>
+          <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">Zoho confirmed that a client who needs to manage and view learner progress must be added as an <strong>internal user</strong>, even when a separate portal is purchased. In our plan, college progress is shared through the filtered Zoho Analytics dashboard (Slide 7).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-slide="9">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-2.5">
+      <div>
+        <div class="text-xs font-extrabold uppercase tracking-wider text-indigo-600">Slide 09 · Learner Journey Walkthrough</div>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">From Course Discovery to Zoho Learn, Closed Won &amp; Optional Renewal</h2>
+      </div>
+
+     <div class="flex flex-wrap items-center gap-2">
+        <button onclick="playCartoonFlow(true)" class="ui-btn bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-md hover:brightness-105">
+          <span>▶</span> <span>Play Walkthrough</span>
+        </button>
+        <button onclick="stepCartoonFlow(-1)" class="ui-btn bg-white border border-slate-300 text-slate-800 hover:border-indigo-400">
+          <span>←</span> <span>Prev Step</span>
+        </button>
+        <button onclick="stepCartoonFlow(1)" class="ui-btn bg-white border border-slate-300 text-slate-800 hover:border-indigo-400">
+          <span>Next Step</span> <span>→</span>
+        </button>
+        <button onclick="playCartoonFlow(true)" class="ui-btn bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+          <span>🔊</span> <span>Replay</span>
+        </button>
+        <button id="renewalToggleBtn" onclick="toggleRenewalNeed()" class="ui-btn border border-teal-400 bg-teal-50 text-teal-900 hover:bg-teal-100">
+          <span>🔄</span> <span>Renewal Needed: On</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-gradient-to-r from-sky-50 via-indigo-50/80 to-violet-50 border border-indigo-200 border-l-4 border-l-indigo-600 p-3 mb-3" style="display:none" aria-hidden="true">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+          <span class="live-dot" id="dot-9"></span> <span>Story Narration</span>
+        </div>
+        <span class="text-[11px] font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full whitespace-nowrap">
+          💻 Click any stop or scroll along the path
+        </span>
+      </div>
+      <p id="flowNarrationText" class="text-sm text-slate-800 font-medium">
+        A student walks over to the Abhyaz course storefront to browse available tracks, selects Robotics, registers with his college at checkout, gets a college ID from Abhyaz for tracking, pays by UPI, and lets Zoho CRM, Zoho Flow, and Zoho Learn handle enrolment, coursework, completion at Closed Won, and optional renewal when needed.
+      </p>
+      <div class="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden mt-2">
+        <div id="prog-9" class="h-full w-0 bg-gradient-to-r from-sky-500 via-indigo-600 to-emerald-500 transition-all duration-300"></div>
+      </div>
+    </div>
+
+    <div class="cartoon-world-viewport" id="cartoonViewport">
+      <div class="cartoon-stage" id="cartoonStage">
+
+        <svg viewBox="0 0 2040 430" width="2040" height="430" class="absolute inset-0 pointer-events-none">
+          <defs>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="55%" stop-color="#bae6fd"/>
+              <stop offset="100%" stop-color="#e0f2fe"/>
+            </linearGradient>
+            <linearGradient id="hillFar" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6ee7b7"/>
+              <stop offset="100%" stop-color="#34d399"/>
+            </linearGradient>
+            <linearGradient id="hillNear" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4ade80"/>
+              <stop offset="100%" stop-color="#16a34a"/>
+            </linearGradient>
+            <linearGradient id="roadGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#475569"/>
+              <stop offset="100%" stop-color="#1e293b"/>
+            </linearGradient>
+          </defs>
+
+          <rect width="2040" height="335" fill="url(#skyGrad)"/>
+
+          <g transform="translate(150, 62)">
+            <circle cx="0" cy="0" r="36" fill="#fde047" opacity="0.35"/>
+            <circle cx="0" cy="0" r="24" fill="#facc15" stroke="#fef08a" stroke-width="3"/>
+          </g>
+
+          <g class="cloud-drift-1" fill="#ffffff" opacity="0.92">
+            <path d="M260,68 Q275,45 300,52 Q320,38 342,54 Q365,52 368,72 Q370,86 350,86 L265,86 Q248,86 250,72 Z"/>
+            <path d="M840,56 Q858,34 884,42 Q905,28 928,44 Q950,42 954,62 Q956,76 935,76 L846,76 Q828,76 830,62 Z"/>
+            <path d="M1460,64 Q1478,42 1504,50 Q1525,36 1548,52 Q1570,50 1574,70 Q1576,84 1555,84 L1466,84 Q1448,84 1450,70 Z"/>
+          </g>
+          <g class="cloud-drift-2" fill="#ffffff" opacity="0.82">
+            <path d="M550,96 Q562,80 580,85 Q595,74 612,86 Q628,85 630,99 Q632,109 616,109 L554,109 Q540,109 542,99 Z"/>
+            <path d="M1150,92 Q1162,76 1180,81 Q1195,70 1212,82 Q1228,81 1230,95 Q1232,105 1216,105 L1154,105 Q1140,105 1142,95 Z"/>
+            <path d="M1750,88 Q1762,72 1780,77 Q1795,66 1812,78 Q1828,77 1830,91 Q1832,101 1816,101 L1754,101 Q1740,101 1742,91 Z"/>
+          </g>
+
+          <path d="M0,335 L0,260 Q220,200 440,260 T900,250 T1380,260 T1840,245 L2040,260 L2040,335 Z" fill="url(#hillFar)"/>
+          <path d="M0,335 L0,285 Q280,240 560,290 T1120,280 T1680,290 L2040,275 L2040,335 Z" fill="url(#hillNear)"/>
+
+          <g transform="translate(45, 272)">
+            <rect x="11" y="24" width="8" height="24" rx="3" fill="#78350f"/>
+            <circle cx="15" cy="18" r="18" fill="#15803d"/>
+            <circle cx="9" cy="14" r="12" fill="#22c55e"/>
+          </g>
+          <g transform="translate(455, 274)">
+            <rect x="10" y="22" width="7" height="22" rx="3" fill="#78350f"/>
+            <circle cx="14" cy="16" r="16" fill="#15803d"/>
+            <circle cx="18" cy="13" r="10" fill="#4ade80"/>
+          </g>
+          <g transform="translate(915, 272)">
+            <rect x="11" y="24" width="8" height="24" rx="3" fill="#78350f"/>
+            <circle cx="15" cy="18" r="18" fill="#15803d"/>
+            <circle cx="10" cy="14" r="11" fill="#22c55e"/>
+          </g>
+          <g transform="translate(1375, 274)">
+            <rect x="10" y="22" width="7" height="22" rx="3" fill="#78350f"/>
+            <circle cx="14" cy="16" r="16" fill="#15803d"/>
+            <circle cx="17" cy="12" r="10" fill="#4ade80"/>
+          </g>
+          <g transform="translate(1985, 270)">
+            <rect x="11" y="24" width="8" height="24" rx="3" fill="#78350f"/>
+            <circle cx="15" cy="18" r="18" fill="#15803d"/>
+            <circle cx="10" cy="14" r="11" fill="#22c55e"/>
+          </g>
+
+          <rect y="324" width="2040" height="106" fill="#22c55e"/>
+          <rect y="324" width="2040" height="8" fill="#4ade80"/>
+
+          <rect y="344" width="2040" height="58" fill="url(#roadGrad)"/>
+          <rect y="342" width="2040" height="4" fill="#cbd5e1"/>
+          <rect y="402" width="2040" height="5" fill="#0f172a"/>
+          <line x1="20" y1="373" x2="2020" y2="373" stroke="#fde047" stroke-width="4" stroke-dasharray="22 18" stroke-linecap="round"/>
+        </svg>
+
+        <!-- 1 (x=130): Storefront -->
+        <div class="landmark-station" id="landmark-0" style="left: 130px;" onclick="jumpToLandmark(0)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-sky-600">01 · Storefront</div>
+            <div class="text-xs font-extrabold leading-tight">Course Store</div>
+            <div class="text-[10px] opacity-80">CNC · Robotics · Zoho</div>
+          </div>
+          <svg width="118" height="98" viewBox="0 0 118 98">
+            <rect x="14" y="34" width="90" height="58" rx="8" fill="#ffffff" stroke="#0284c7" stroke-width="3"/>
+            <path d="M8,36 L18,16 L100,16 L110,36 Z" fill="#0284c7"/>
+            <path d="M28,16 L24,36 L42,36 L44,16 Z" fill="#38bdf8"/>
+            <path d="M62,16 L60,36 L78,36 L76,16 Z" fill="#38bdf8"/>
+            <path d="M92,16 L94,36 L108,36 L100,16 Z" fill="#38bdf8"/>
+            <rect x="24" y="46" width="44" height="30" rx="5" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="2"/>
+            <text x="46" y="65" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">SHOP</text>
+            <rect x="76" y="48" width="20" height="44" rx="4" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- 2 (x=355): Choosing Robotics -->
+        <div class="landmark-station" id="landmark-1" style="left: 355px;" onclick="jumpToLandmark(1)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-emerald-600">02 · Selection</div>
+            <div class="text-xs font-extrabold leading-tight">Pick Robotics</div>
+            <div class="text-[10px] opacity-80">Selected Track</div>
+          </div>
+          <svg width="110" height="98" viewBox="0 0 110 98">
+            <rect x="26" y="64" width="58" height="28" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+            <rect x="36" y="72" width="38" height="12" rx="3" fill="#10b981"/>
+            <text x="55" y="81" text-anchor="middle" font-size="8" font-weight="800" fill="#ffffff">ROBOTICS</text>
+            <rect x="37" y="24" width="36" height="30" rx="8" fill="#e2e8f0" stroke="#334155" stroke-width="2.5"/>
+            <line x1="55" y1="24" x2="55" y2="12" stroke="#334155" stroke-width="3"/>
+            <circle cx="55" cy="10" r="4.5" fill="#10b981"/>
+            <circle cx="47" cy="37" r="4" fill="#0284c7"/>
+            <circle cx="63" cy="37" r="4" fill="#0284c7"/>
+            <rect x="46" y="45" width="18" height="4" rx="2" fill="#475569"/>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- 3 (x=580): Paying via College & UPI -->
+        <div class="landmark-station" id="landmark-2" style="left: 580px;" onclick="jumpToLandmark(2)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-teal-600">03 · Checkout</div>
+            <div class="text-xs font-extrabold leading-tight">College &amp; UPI</div>
+            <div class="text-[10px] opacity-80">CLG-001 · ₹ Paid</div>
+          </div>
+          <svg width="114" height="98" viewBox="0 0 114 98">
+            <rect x="44" y="62" width="26" height="30" rx="4" fill="#334155"/>
+            <rect x="22" y="16" width="70" height="50" rx="10" fill="#ffffff" stroke="#0d9488" stroke-width="3"/>
+            <rect x="30" y="23" width="54" height="26" rx="5" fill="#ccfbf1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="9" font-weight="800" fill="#0f766e">CLG-001</text>
+            <text x="57" y="45" text-anchor="middle" font-size="9" font-weight="800" fill="#059669">✓ UPI PAID</text>
+            <rect x="36" y="54" width="42" height="6" rx="3" fill="#14b8a6"/>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- 4 (x=805): Zoho CRM Contact & Deal -->
+        <div class="landmark-station" id="landmark-3" style="left: 805px;" onclick="jumpToLandmark(3)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-indigo-600">04 · Zoho CRM</div>
+            <div class="text-xs font-extrabold leading-tight">Contact &amp; Deal</div>
+            <div class="text-[10px] opacity-80">Abhyaz Team Sync</div>
+          </div>
+          <svg width="116" height="104" viewBox="0 0 116 104">
+            <rect x="24" y="12" width="68" height="84" rx="8" fill="#eef2ff" stroke="#4f46e5" stroke-width="3"/>
+            <rect x="32" y="22" width="52" height="16" rx="4" fill="#4f46e5"/>
+            <text x="58" y="33" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff">ZOHO CRM</text>
+            <rect x="34" y="44" width="48" height="18" rx="4" fill="#ffffff" stroke="#a5b4fc" stroke-width="1.5"/>
+            <circle cx="43" cy="53" r="4" fill="#38bdf8"/>
+            <line x1="51" y1="51" x2="75" y2="51" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="51" y1="56" x2="68" y2="56" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+            <rect x="34" y="68" width="48" height="18" rx="4" fill="#dcfce7" stroke="#4ade80" stroke-width="1.5"/>
+            <text x="58" y="80" text-anchor="middle" font-size="8.5" font-weight="800" fill="#15803d">DEAL CREATED</text>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- 5 (x=1030): Zoho Flow Thunder Archway -->
+        <div class="landmark-station" id="landmark-4" style="left: 1030px;" onclick="jumpToLandmark(4)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-amber-600">05 · Automation</div>
+            <div class="text-xs font-extrabold leading-tight">Zoho Flow ⚡</div>
+            <div class="text-[10px] opacity-80">Bolt &amp; Pulse Rings</div>
+          </div>
+          <svg width="176" height="108" viewBox="0 0 176 108" id="zohoFlowArchSvg">
+            <rect x="26" y="34" width="16" height="68" rx="6" fill="#f59e0b" stroke="#b45309" stroke-width="2.5"/>
+            <rect x="134" y="34" width="16" height="68" rx="6" fill="#f59e0b" stroke="#b45309" stroke-width="2.5"/>
+            <path d="M22,42 Q88,4 154,42 L144,54 Q88,22 32,54 Z" fill="#fbbf24" stroke="#b45309" stroke-width="2.5"/>
+            <circle class="pulse-ring-svg r1" cx="88" cy="54" r="22" fill="none" stroke="#f59e0b" stroke-width="3.5"/>
+            <circle class="pulse-ring-svg r2" cx="88" cy="54" r="22" fill="none" stroke="#ef4444" stroke-width="3"/>
+            <circle cx="88" cy="54" r="20" fill="#fef3c7" stroke="#f59e0b" stroke-width="2.5"/>
+            <g class="bolt-bounce">
+              <polygon points="91,36 77,56 87,56 83,73 100,51 89,51" fill="#f59e0b" stroke="#92400e" stroke-width="2" stroke-linejoin="round"/>
+            </g>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- 6 (x=1255): Getting Enrolment (Zoho Learn) -->
+        <div class="landmark-station" id="landmark-5" style="left: 1255px;" onclick="jumpToLandmark(5)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-sky-600">06 · Enrolment</div>
+            <div class="text-xs font-extrabold leading-tight">Zoho Learn</div>
+            <div class="text-[10px] opacity-80">Seat Pass Issued</div>
+          </div>
+          <svg width="122" height="102" viewBox="0 0 122 102">
+            <polygon points="14,38 61,12 108,38" fill="#0284c7" stroke="#0369a1" stroke-width="2.5"/>
+            <rect x="22" y="38" width="78" height="58" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="3"/>
+            <rect x="34" y="46" width="54" height="16" rx="4" fill="#e0f2fe"/>
+            <text x="61" y="57" text-anchor="middle" font-size="8.5" font-weight="800" fill="#0369a1">ZOHO LEARN</text>
+            <path d="M41,72 Q51,68 61,73 Q71,68 81,72 L81,86 Q71,82 61,87 Q51,82 41,86 Z" fill="#38bdf8" stroke="#0284c7" stroke-width="2"/>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- 7 (x=1470): Learning Things (Study Lab) -->
+        <div class="landmark-station" id="landmark-6" style="left: 1470px;" onclick="jumpToLandmark(6)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-violet-600">07 · Coursework</div>
+            <div class="text-xs font-extrabold leading-tight">Study &amp; Labs</div>
+            <div class="text-[10px] opacity-80">Modules &amp; Practice</div>
+          </div>
+          <svg width="118" height="98" viewBox="0 0 118 98">
+            <rect x="18" y="64" width="82" height="8" rx="3" fill="#92400e"/>
+            <rect x="26" y="72" width="8" height="20" fill="#78350f"/>
+            <rect x="84" y="72" width="8" height="20" fill="#78350f"/>
+            <rect x="34" y="34" width="50" height="28" rx="5" fill="#1e293b" stroke="#7c3aed" stroke-width="2.5"/>
+            <rect x="39" y="39" width="40" height="18" rx="2" fill="#ede9fe"/>
+            <rect x="43" y="43" width="28" height="4" rx="2" fill="#7c3aed"/>
+            <rect x="43" y="50" width="32" height="4" rx="2" fill="#10b981"/>
+            <rect x="28" y="61" width="62" height="4" rx="2" fill="#64748b"/>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- 8 (x=1690): Completion + Certificate + Closed Won -->
+        <div class="landmark-station" id="landmark-7" style="left: 1690px;" onclick="jumpToLandmark(7)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-emerald-600">08 · Completion</div>
+            <div class="text-xs font-extrabold leading-tight">Closed Won 🎓</div>
+            <div class="text-[10px] opacity-80">Certificate Issued</div>
+          </div>
+          <svg width="128" height="106" viewBox="0 0 128 106">
+            <rect x="22" y="68" width="84" height="32" rx="6" fill="#059669" stroke="#064e3b" stroke-width="2.5"/>
+            <text x="64" y="88" text-anchor="middle" font-size="9.5" font-weight="800" fill="#ffffff">CLOSED WON</text>
+            <path d="M52,32 L76,32 L72,50 Q64,58 56,50 Z" fill="#facc15" stroke="#b45309" stroke-width="2.5"/>
+            <rect x="61" y="54" width="6" height="8" fill="#b45309"/>
+            <rect x="53" y="61" width="22" height="6" rx="2" fill="#f59e0b"/>
+            <polygon points="64,8 42,18 64,27 86,18" fill="#1e293b"/>
+            <line x1="82" y1="19" x2="82" y2="29" stroke="#facc15" stroke-width="2.5"/>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- 9 (x=1915): Renewal Option Portal (If Needed) -->
+        <div class="landmark-station" id="landmark-8" style="left: 1915px;" onclick="jumpToLandmark(8)">
+          <div class="landmark-sign">
+            <div class="text-[10px] font-extrabold uppercase text-teal-600">09 · Optional</div>
+            <div class="text-xs font-extrabold leading-tight">Renewal Loop 🔄</div>
+            <div class="text-[10px] opacity-80">Next Term If Needed</div>
+          </div>
+          <svg width="128" height="104" viewBox="0 0 128 104">
+            <rect x="26" y="72" width="76" height="26" rx="6" fill="#0f766e" stroke="#115e59" stroke-width="2.5"/>
+            <text x="64" y="88" text-anchor="middle" font-size="8.5" font-weight="800" fill="#ffffff">RENEW / EXTEND</text>
+            <circle cx="64" cy="42" r="24" fill="#ccfbf1" stroke="#0d9488" stroke-width="3"/>
+            <g class="renewal-spin">
+              <path d="M64,24 A18,18 0 1,1 48,50" fill="none" stroke="#0f766e" stroke-width="3.5" stroke-linecap="round"/>
+              <polygon points="64,19 72,25 63,30" fill="#0f766e"/>
+            </g>
+            <text x="64" y="46" text-anchor="middle" font-size="11" font-weight="900" fill="#0f766e">₹↻</text>
+          </svg>
+          <div class="landing-pad"></div>
+        </div>
+
+        <!-- CUSTOM ILLUSTRATED SVG CARTOON BOY (DIRECTIONAL RIG) -->
+        <div class="cartoon-character" id="cartoonChar" style="left: 130px;">
+          <div class="char-speech" id="charSpeech">Browsing courses</div>
+          <div class="action-prop-bubble" id="actionPropBubble">🔍</div>
+          <div class="char-facing face-right" id="charFacing">
+            <svg class="char-rig" viewBox="0 0 84 98" width="84" height="98">
+              <rect x="16" y="42" width="14" height="24" rx="6" fill="#f97316" stroke="#9a3412" stroke-width="2"/>
+              <g class="arm-back">
+                <rect x="33" y="44" width="7" height="17" rx="3.5" fill="#f59e0b" stroke="#b45309" stroke-width="1.5"/>
+              </g>
+              <g class="leg-back">
+                <rect x="35" y="64" width="8" height="19" rx="4" fill="#1e3a8a"/>
+                <rect x="34" y="80" width="13" height="7" rx="3.5" fill="#dc2626" stroke="#ffffff" stroke-width="1.5"/>
+              </g>
+              <rect x="29" y="41" width="24" height="26" rx="8" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
+              <text x="41" y="57" text-anchor="middle" font-size="9" font-weight="900" fill="#ffffff">A</text>
+              <g class="leg-front">
+                <rect x="41" y="64" width="8" height="19" rx="4" fill="#1d4ed8"/>
+                <rect x="40" y="80" width="13" height="7" rx="3.5" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/>
+              </g>
+              <g class="arm-front">
+                <rect x="44" y="44" width="7" height="18" rx="3.5" fill="#fde68a" stroke="#d97706" stroke-width="1.5"/>
+              </g>
+              <circle cx="43" cy="24" r="15" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+              <path d="M28,22 Q29,8 44,8 Q58,8 58,21 Q50,15 40,16 Q32,17 28,22 Z" fill="#1e293b"/>
+              <path d="M57,24 L61,26 L57,28" fill="none" stroke="#d97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="51" cy="22" r="2.2" fill="#0f172a"/>
+              <path d="M47,30 Q51,33 55,30" fill="none" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="49" cy="27" r="2.2" fill="#fb7185" opacity="0.65"/>
+            </svg>
+          </div>
+          <div class="char-shadow" id="charShadow"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="mt-2.5 bg-white/95 border border-slate-200 rounded-2xl px-3.5 py-2 flex flex-wrap items-center justify-between gap-2 text-xs shadow-sm">
+      <div class="flex flex-wrap items-center gap-1.5" id="landmarkPillBar">
+        <button onclick="jumpToLandmark(0)" class="lm-pill px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-100 font-bold text-slate-700">1. 🔍 Search</button>
+        <button onclick="jumpToLandmark(1)" class="lm-pill px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-100 font-bold text-slate-700">2. 🤖 Robotics</button>
+        <button onclick="jumpToLandmark(2)" class="lm-pill px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-100 font-bold text-slate-700">3. 📱 UPI Pay</button>
+        <button onclick="jumpToLandmark(3)" class="lm-pill px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-100 font-bold text-slate-700">4. 📇 CRM</button>
+        <button onclick="jumpToLandmark(4)" class="lm-pill px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 font-bold text-amber-900">5. ⚡ Flow</button>
+        <button onclick="jumpToLandmark(5)" class="lm-pill px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-100 font-bold text-slate-700">6. 🎟️ Enrol</button>
+        <button onclick="jumpToLandmark(6)" class="lm-pill px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-sky-100 font-bold text-slate-700">7. 📚 Learn</button>
+        <button onclick="jumpToLandmark(7)" class="lm-pill px-2.5 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 font-bold text-emerald-900">8. 🎓 Closed Won</button>
+        <button onclick="jumpToLandmark(8)" id="renewalPillBtn" class="lm-pill px-2.5 py-1 rounded-lg bg-teal-100 hover:bg-teal-200 font-bold text-teal-900">9. 🔄 Renewal (If Needed)</button>
+      </div>
+      <span id="renewalStatusNote" class="font-semibold text-slate-600">Optional Renewal Loop: Enabled</span>
+    </div>
+
+</section>
+
+</main>
+
+<script>
+  const totalSlides = 9;
+  let currentSlide = 1;
+  let autoAdvance = true;
+  let voiceOn = false;
+  let sfxOn = false;
+  let renewalNeeded = true;
+  let audioCtx = null;
+  let progressInterval = null;
+  let advanceTimeout = null;
+  let flowTimers = [];
+  let flowStep = -1;
+  let flowRunId = 0;
+
+  const landmarkX = [130, 355, 580, 805, 1030, 1255, 1470, 1690, 1915];
+  const landmarkStationDir = [1, 1, -1, 1, 1, -1, 1, 1, -1];
+  const landmarkShortLabels = [
+    "Browsing courses",
+    "Picking Robotics",
+    "Paying via UPI",
+    "CRM Deal synced",
+    "Zoho Flow ⚡",
+    "Enrolled in Learn",
+    "Studying labs",
+    "🎓 Closed Won!",
+    "🔄 Term renewed"
+  ];
+  const landmarkProps = ["🔍", "🤖", "📱", "📇", "⚡", "🎟️", "📚", "🎓", "🔄"];
+  const landmarkPoseClasses = [
+    "act-search",
+    "act-choose",
+    "act-pay",
+    "act-choose",
+    "act-celebrate",
+    "act-enrol",
+    "act-study",
+    "act-celebrate",
+    "act-celebrate"
+  ];
+  const landmarkVfxIcons = [
+    ["🔍", "⚙️", "🤖", "💼"],
+    ["✨", "🤖", "⭐"],
+    ["₹", "💳", "✅", "₹"],
+    ["📇", "📊", "✨"],
+    ["⚡", "💥", "⚡", "✨"],
+    ["🎟️", "📚", "⭐"],
+    ["💡", "📖", "⚙️", "💻"],
+    ["🎓", "📜", "🏆", "✨"],
+    ["🔄", "₹", "✅", "📚"]
+  ];
+
+  const stepSpeeches = [
+    "Heading over to the course storefront, he checks CNC Machining, Robotics, Pneumatics, and Zoho tools.",
+    "Robotics catches his eye, so he picks the Robotics course for his track.",
+    "At checkout, he registers with St. Xavier College. Abhyaz assigns college ID CLG-001 to track him, and he pays right away using UPI.",
+    "The payment creates a Contact and Deal in Zoho CRM so the Abhyaz team has full visibility.",
+    "Zoho Flow lights up, enrolling him automatically without manual handoffs.",
+    "He arrives on Zoho Learn with his Robotics enrolment active and ready to start.",
+    "Working through lessons, books, and hands-on labs, he builds practical Robotics skills.",
+    "Finishing the course earns his certificate and moves the deal to Closed Won.",
+    "Whenever a student or college needs another term later, the optional renewal flow extends access cleanly."
+  ];
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  }
+
+  function toggleAutoAdvance() {
+    autoAdvance = !autoAdvance;
+    const btn = document.getElementById("autoAdvanceBtn");
+    btn.innerHTML = autoAdvance ? "<span>⏭</span> <span>Auto-Next: On</span>" : "<span>⏭</span> <span>Auto-Next: Off</span>";
+    if (autoAdvance) {
+      btn.className = "ui-btn border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100";
+      scheduleAutoAdvanceForSlide(currentSlide);
+    } else {
+      btn.className = "ui-btn border border-slate-200 bg-white text-slate-700 hover:bg-slate-50";
+      clearTimersOnly();
+    }
+  }
+
+  function toggleVoice() {
+    voiceOn = !voiceOn;
+    const btn = document.getElementById("voiceBtn");
+    btn.innerHTML = voiceOn ? "<span>🗣️</span> <span>Voice: On</span>" : "<span>🗣️</span> <span>Voice: Off</span>";
+    if (voiceOn) {
+      btn.className = "ui-btn border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100";
+      replayCurrentNarration();
+    } else {
+      btn.className = "ui-btn border border-slate-200 bg-white text-slate-700 hover:border-sky-400 hover:bg-slate-50";
+      stopSpeech();
+    }
+  }
+
+  function toggleSfx() {
+    sfxOn = !sfxOn;
+    const btn = document.getElementById("sfxBtn");
+    btn.innerHTML = sfxOn ? "<span>🔊</span> <span>SFX: On</span>" : "<span>🔊</span> <span>SFX: Off</span>";
+    if (sfxOn) {
+      btn.className = "ui-btn border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100";
+      ensureAudio();
+      tone(523.25, 0.09, "sine", 0.09);
+    } else {
+      btn.className = "ui-btn border border-slate-200 bg-white text-slate-700 hover:border-sky-400 hover:bg-slate-50";
+    }
+  }
+
+  function toggleRenewalNeed() {
+    renewalNeeded = !renewalNeeded;
+    const btn = document.getElementById("renewalToggleBtn");
+    const lm8 = document.getElementById("landmark-8");
+    const pill8 = document.getElementById("renewalPillBtn");
+    const note = document.getElementById("renewalStatusNote");
+
+    if (renewalNeeded) {
+      btn.innerHTML = "<span>🔄</span> <span>Renewal Needed: On</span>";
+      btn.className = "ui-btn border border-teal-400 bg-teal-50 text-teal-900 hover:bg-teal-100";
+      if (lm8) lm8.style.opacity = "1";
+      if (pill8) pill8.style.opacity = "1";
+      if (note) note.textContent = "Optional Renewal Loop: Enabled (9 Landmarks)";
+    } else {
+      btn.innerHTML = "<span>🔄</span> <span>Renewal Needed: Off</span>";
+      btn.className = "ui-btn border border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200";
+      if (lm8) lm8.style.opacity = "0.35";
+      if (pill8) pill8.style.opacity = "0.45";
+      if (note) note.textContent = "Single-Term Mode: Ends at Closed Won (No Renewal)";
+    }
+    playCartoonFlow(voiceOn);
+  }
+
+  function startGuidedDemo() {
+    if (!voiceOn) toggleVoice();
+    if (!autoAdvance) toggleAutoAdvance();
+    goToSlide(2);
+  }
+
+  function tone(freq, dur, type = "sine", vol = 0.09, slideTo = null) {
+    if (!sfxOn) return;
+    ensureAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, now + dur);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(vol, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + dur + 0.02);
+  }
+
+  function playCartoonCue(idx) {
+    tone(220, 0.06, "triangle", 0.07, 160);
+    setTimeout(() => {
+      if (idx === 4) {
+        tone(340, 0.16, "sawtooth", 0.12, 1020);
+        setTimeout(() => tone(1280, 0.18, "sine", 0.12, 760), 95);
+      } else if (idx === 7 || idx === 8) {
+        tone(523.25, 0.3, "triangle", 0.11);
+        setTimeout(() => tone(659.25, 0.3, "triangle", 0.11), 80);
+        setTimeout(() => tone(783.99, 0.36, "triangle", 0.11), 160);
+        setTimeout(() => tone(1046.5, 0.42, "triangle", 0.11), 240);
+      } else {
+        tone(320 + idx * 35, 0.12, "sine", 0.1, 500 + idx * 42);
+      }
+    }, 300);
+  }
+
+  /* ---- Voice engine: sentence-by-sentence, stale-callback safe ---- */
+  let speechToken = 0;
+  function pickVoice() {
+    const vs = window.speechSynthesis.getVoices() || [];
+    const en = vs.filter(v => /^en/i.test(v.lang));
+    const score = v => {
+      let sc = 0;
+      if (/en[-_]IN/i.test(v.lang)) sc += 6;
+      else if (/en[-_]GB/i.test(v.lang)) sc += 4;
+      else if (/en[-_]US/i.test(v.lang)) sc += 3;
+      if (/natural|neural|online|google|premium|enhanced/i.test(v.name)) sc += 5;
+      if (v.localService === false) sc += 1;
+      return sc;
+    };
+    return en.sort((a, b) => score(b) - score(a))[0] || null;
+  }
+  function speakChunks(text, rate, token, onDone) {
+    const parts = (text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text]).map(x => x.trim()).filter(Boolean);
+    let k = 0;
+    const next = () => {
+      if (token !== speechToken) return;
+      if (k >= parts.length) { if (onDone) onDone(); return; }
+      const u = new SpeechSynthesisUtterance(parts[k++]);
+      const v = pickVoice();
+      if (v) { u.voice = v; u.lang = v.lang; } else { u.lang = "en-IN"; }
+      u.rate = rate;
+      u.pitch = 1;
+      u.onend = () => { if (token === speechToken) setTimeout(next, 450); };
+      u.onerror = () => { if (token === speechToken) setTimeout(next, 100); };
+      window.speechSynthesis.speak(u);
+    };
+    setTimeout(next, 300);
+  }
+
+  function stopSpeech() {
+    speechToken++;
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    document.querySelectorAll(".live-dot").forEach(d => d.classList.remove("on"));
+  }
+
+  function clearTimersOnly() {
+    clearInterval(progressInterval);
+    clearTimeout(advanceTimeout);
+    progressInterval = null;
+    advanceTimeout = null;
+  }
+
+  function clearFlowTimers() {
+    flowRunId++;
+    flowTimers.forEach(t => clearTimeout(t));
+    flowTimers = [];
+  }
+
+  function animateProgressBar(slideNum, durationMs, onComplete) {
+    clearTimersOnly();
+    const fill = document.getElementById(`prog-${slideNum}`);
+    if (!fill) return;
+    fill.style.width = "0%";
+    const start = Date.now();
+    progressInterval = setInterval(() => {
+      const pct = Math.min(100, ((Date.now() - start) / durationMs) * 100);
+      fill.style.width = `${pct}%`;
+      if (pct >= 100) clearInterval(progressInterval);
+    }, 60);
+
+    if (autoAdvance && onComplete) {
+      advanceTimeout = setTimeout(onComplete, durationMs);
+    }
+  }
+
+  function speakSlide(slideNum, onDoneCallback = null) {
+    const el = document.getElementById(`narration-${slideNum}`);
+    const text = el ? el.textContent.trim() : "";
+    const estimatedMs = Math.max(7000, Math.min(30000, text.length * 95));
+
+    if (!voiceOn || !("speechSynthesis" in window) || !text) {
+      animateProgressBar(slideNum, estimatedMs, () => {
+        if (onDoneCallback) onDoneCallback();
+      });
+      return;
+    }
+
+    stopSpeech();
+    const token = speechToken;
+    const dot = document.getElementById(`dot-${slideNum}`);
+    if (dot) dot.classList.add("on");
+    animateProgressBar(slideNum, estimatedMs + 4000, null);
+
+    let finished = false;
+    const finish = () => {
+      if (finished || token !== speechToken) return;
+      finished = true;
+      if (dot) dot.classList.remove("on");
+      clearTimersOnly();
+      const fill = document.getElementById(`prog-${slideNum}`);
+      if (fill) fill.style.width = "100%";
+      if (autoAdvance && onDoneCallback) {
+        advanceTimeout = setTimeout(onDoneCallback, 2200);
+      }
+    };
+    speakChunks(text, 0.88, token, finish);
+    setTimeout(() => {
+      if (!finished && token === speechToken && !window.speechSynthesis.speaking) finish();
+    }, estimatedMs * 2 + 8000);
+  }
+
+  function replayCurrentNarration() {
+    if (currentSlide === 9) {
+      playCartoonFlow(true);
+    } else {
+      speakSlide(currentSlide, () => {
+        if (currentSlide < totalSlides) goToSlide(currentSlide + 1);
+      });
+    }
+  }
+
+  function scheduleAutoAdvanceForSlide(slideNum) {
+    if (!autoAdvance || slideNum >= totalSlides || slideNum === 9) return;
+    speakSlide(slideNum, () => {
+      if (autoAdvance && currentSlide === slideNum && currentSlide < totalSlides) {
+        goToSlide(currentSlide + 1);
+      }
+    });
+  }
+
+  function renderDots() {
+    const bar = document.getElementById("dotsBar");
+    bar.innerHTML = "";
+    for (let i = 1; i <= totalSlides; i++) {
+      const b = document.createElement("button");
+      b.className = i === currentSlide
+        ? "h-2 w-10 rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 transition-all duration-300 shadow-sm"
+        : "h-2 w-5 rounded-full bg-slate-300 hover:bg-slate-400 transition-all duration-300";
+      b.title = `Go to Slide ${i}`;
+      b.onclick = () => goToSlide(i);
+      bar.appendChild(b);
+    }
+  }
+
+  function goToSlide(n) {
+    if (n < 1 || n > totalSlides) return;
+    stopSpeech();
+    clearTimersOnly();
+    clearFlowTimers();
+    currentSlide = n;
+
+    document.querySelectorAll(".slide").forEach(s => {
+      s.classList.toggle("active", Number(s.dataset.slide) === currentSlide);
+    });
+    document.getElementById("slideCounter").textContent = `${currentSlide} / ${totalSlides}`;
+    document.getElementById("prevBtn").disabled = currentSlide === 1;
+    document.getElementById("nextBtn").disabled = currentSlide === totalSlides;
+    renderDots();
+    tone(410, 0.08, "triangle", 0.07, 540);
+
+    if (currentSlide === 9) {
+      playCartoonFlow(voiceOn);
+    } else {
+      speakSlide(currentSlide, () => {
+        if (autoAdvance && currentSlide === n && currentSlide < totalSlides) {
+          goToSlide(currentSlide + 1);
+        }
+      });
+    }
+  }
+
+  function changeSlide(delta) {
+    goToSlide(currentSlide + delta);
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") changeSlide(1);
+    if (e.key === "ArrowLeft") changeSlide(-1);
+  });
+
+  function spawnDustPuffs(xPos) {
+    const stage = document.getElementById("cartoonStage");
+    if (!stage) return;
+    const offsets = [
+      { dx: "-24px", dy: "-10px" },
+      { dx: "24px", dy: "-10px" },
+      { dx: "-14px", dy: "-18px" },
+      { dx: "14px", dy: "-18px" }
+    ];
+    offsets.forEach(o => {
+      const puff = document.createElement("div");
+      puff.className = "dust-puff";
+      puff.style.left = `${xPos - 7}px`;
+      puff.style.setProperty("--dx", o.dx);
+      puff.style.setProperty("--dy", o.dy);
+      stage.appendChild(puff);
+      setTimeout(() => puff.remove(), 600);
+    });
+  }
+
+  function spawnActionVfx(xPos, idx) {
+    const stage = document.getElementById("cartoonStage");
+    if (!stage) return;
+    const icons = landmarkVfxIcons[idx] || ["✨"];
+    icons.forEach((icon, i) => {
+      const el = document.createElement("div");
+      el.className = "vfx-floater";
+      el.textContent = icon;
+      el.style.left = `${xPos - 10 + (i - 1.5) * 18}px`;
+      el.style.bottom = "175px";
+      el.style.setProperty("--vx1", `${(i - 1.5) * 14}px`);
+      el.style.setProperty("--vx2", `${(i - 1.5) * 26}px`);
+      stage.appendChild(el);
+      setTimeout(() => el.remove(), 1250);
+    });
+  }
+
+  function spawnConfettiBurst(xPos) {
+    const stage = document.getElementById("cartoonStage");
+    if (!stage) return;
+    const colors = ["#f43f5e", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"];
+    for (let i = 0; i < 24; i++) {
+      const bit = document.createElement("div");
+      bit.className = "confetti-bit";
+      bit.style.left = `${xPos}px`;
+      bit.style.bottom = "190px";
+      bit.style.backgroundColor = colors[i % colors.length];
+      const angle = (Math.PI * 2 * i) / 24 + (Math.random() - 0.5) * 0.3;
+      const dist = 55 + Math.random() * 85;
+      bit.style.setProperty("--cx", `${Math.cos(angle) * dist}px`);
+      bit.style.setProperty("--cy", `${Math.sin(angle) * dist - 45}px`);
+      stage.appendChild(bit);
+      setTimeout(() => bit.remove(), 1450);
+    }
+  }
+
+  function setCharacterFacing(dir) {
+    const facingEl = document.getElementById("charFacing");
+    if (!facingEl) return;
+    facingEl.classList.toggle("face-right", dir >= 0);
+    facingEl.classList.toggle("face-left", dir < 0);
+  }
+
+  function moveCharacterToLandmark(idx) {
+    const prevIdx = flowStep;
+    flowStep = idx;
+    const charEl = document.getElementById("cartoonChar");
+    const speechEl = document.getElementById("charSpeech");
+    const propEl = document.getElementById("actionPropBubble");
+    const viewport = document.getElementById("cartoonViewport");
+    const archSvg = document.getElementById("zohoFlowArchSvg");
+    const targetX = landmarkX[idx];
+    const currentX = prevIdx >= 0 ? landmarkX[prevIdx] : targetX;
+
+    const moveDir = targetX < currentX ? -1 : 1;
+    const stationDir = landmarkStationDir[idx] ?? 1;
+
+    for (let i = 0; i < 9; i++) {
+      const lm = document.getElementById(`landmark-${i}`);
+      if (!lm) continue;
+      lm.classList.toggle("visited", i < idx);
+      lm.classList.toggle("active-station", i === idx);
+    }
+
+    if (archSvg) {
+      archSvg.classList.toggle("zap-arch-active", idx >= 4);
+    }
+
+    document.querySelectorAll(".lm-pill").forEach((pill, pIdx) => {
+      pill.classList.toggle("ring-2", pIdx === idx);
+      pill.classList.toggle("ring-indigo-600", pIdx === idx);
+    });
+
+    if (charEl) {
+      charEl.classList.remove(
+        "is-landing",
+        "act-search",
+        "act-choose",
+        "act-pay",
+        "act-enrol",
+        "act-study",
+        "act-celebrate"
+      );
+      setCharacterFacing(moveDir);
+      charEl.classList.add("is-walking");
+      charEl.style.left = `${targetX}px`;
+      if (speechEl) speechEl.textContent = landmarkShortLabels[idx];
+
+      if (propEl) {
+        propEl.style.animation = "none";
+        void propEl.offsetWidth;
+        propEl.textContent = landmarkProps[idx];
+        propEl.style.animation = "";
+      }
+
+      if (viewport) {
+        const scrollTarget = Math.max(0, targetX - viewport.clientWidth / 2);
+        viewport.scrollTo({ left: scrollTarget, behavior: "smooth" });
+      }
+
+      setTimeout(() => {
+        if (flowStep !== idx) return;
+        charEl.classList.remove("is-walking");
+        setCharacterFacing(stationDir);
+        void charEl.offsetWidth;
+        charEl.classList.add("is-landing", landmarkPoseClasses[idx]);
+        spawnDustPuffs(targetX);
+        spawnActionVfx(targetX, idx);
+
+        if (idx === 7 || idx === 8) {
+          spawnConfettiBurst(targetX);
+        }
+      }, 780);
+    }
+
+    const nText = document.getElementById("flowNarrationText");
+    if (nText) nText.textContent = stepSpeeches[idx] || "";
+    playCartoonCue(idx);
+  }
+
+  function playCartoonFlow(withSpeech = false) {
+    clearFlowTimers();
+    clearTimersOnly();
+    stopSpeech();
+    const runId = flowRunId;
+    const tok = speechToken;
+    flowStep = -1;
+    const totalStops = renewalNeeded ? 9 : 8;
+
+    const fill = document.getElementById("prog-9");
+    if (fill) fill.style.width = "0%";
+
+    if (withSpeech && voiceOn && "speechSynthesis" in window) {
+      function runSpokenStep(i) {
+        if (runId !== flowRunId || i >= totalStops) return;
+        moveCharacterToLandmark(i);
+        if (fill) fill.style.width = `${((i + 1) / totalStops) * 100}%`;
+
+        const dot = document.getElementById("dot-9");
+        if (dot) dot.classList.add("on");
+        speakChunks(stepSpeeches[i], 0.9, tok, () => {
+          if (runId !== flowRunId) return;
+          if (dot) dot.classList.remove("on");
+          if (i + 1 < totalStops) {
+            flowTimers.push(setTimeout(() => runSpokenStep(i + 1), 1200));
+          }
+        });
+      }
+      runSpokenStep(0);
+    } else {
+      for (let i = 0; i < totalStops; i++) {
+        flowTimers.push(setTimeout(() => {
+          if (runId !== flowRunId) return;
+          moveCharacterToLandmark(i);
+          if (fill) fill.style.width = `${((i + 1) / totalStops) * 100}%`;
+        }, i * 4000 + 180));
+      }
+    }
+  }
+
+  function stepCartoonFlow(delta = 1) {
+    clearFlowTimers();
+    stopSpeech();
+    const totalStops = renewalNeeded ? 9 : 8;
+    const next = (flowStep + delta + totalStops) % totalStops;
+    moveCharacterToLandmark(next);
+    const fill = document.getElementById("prog-9");
+    if (fill) fill.style.width = `${((next + 1) / totalStops) * 100}%`;
+    if (voiceOn && "speechSynthesis" in window) {
+      speakChunks(stepSpeeches[next], 0.9, speechToken, null);
+    }
+  }
+
+  function jumpToLandmark(idx) {
+    clearFlowTimers();
+    stopSpeech();
+    if (idx === 8 && !renewalNeeded) {
+      renewalNeeded = true;
+      const btn = document.getElementById("renewalToggleBtn");
+      const lm8 = document.getElementById("landmark-8");
+      const pill8 = document.getElementById("renewalPillBtn");
+      const note = document.getElementById("renewalStatusNote");
+      btn.innerHTML = "<span>🔄</span> <span>Renewal Needed: On</span>";
+      btn.className = "ui-btn border border-teal-400 bg-teal-50 text-teal-900 hover:bg-teal-100";
+      if (lm8) lm8.style.opacity = "1";
+      if (pill8) pill8.style.opacity = "1";
+      if (note) note.textContent = "Optional Renewal Loop: Enabled (9 Landmarks)";
+    }
+    const totalStops = renewalNeeded ? 9 : 8;
+    moveCharacterToLandmark(idx);
+    const fill = document.getElementById("prog-9");
+    if (fill) fill.style.width = `${((idx + 1) / totalStops) * 100}%`;
+    if (voiceOn && "speechSynthesis" in window) {
+      stopSpeech();
+      speakChunks(stepSpeeches[idx], 0.9, speechToken, null);
+    }
+  }
+
+  renderDots();
+  document.getElementById("prevBtn").disabled = true;
+
+  // Start the presentation after the page has loaded. Without this call,
+  // Auto-Next appears enabled but the first slide never starts its timer.
+  window.addEventListener("load", () => {
+    if (autoAdvance) scheduleAutoAdvanceForSlide(currentSlide);
+  });
+
+</script>
+</body>
+</html>
+
